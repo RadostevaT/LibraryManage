@@ -1,6 +1,7 @@
 import asyncHandler from 'express-async-handler';
 import ReaderTicket from '../models/ticketModel.js';
 import User from '../models/userModel.js';
+import TicketEventModel from '../models/ticketEventModel.js';
 
 // @desc    Create reader ticket for a user
 // @route   POST /api/tickets/create
@@ -66,6 +67,15 @@ const createTicket = asyncHandler(async (req, res, next) => {
 
         // Сохраняем читательский билет
         const createdTicket = await readerTicket.save();
+
+        // Создаем запись о событии создания билета
+        const ticketEvent = new TicketEventModel({
+            user: user._id,
+            ticket: createdTicket._id,
+            eventType: 'TicketCreated', // или другой подходящий тип события
+        });
+
+        await ticketEvent.save();
 
         res.status(201).json(createdTicket);
     } catch (error) {
@@ -144,7 +154,6 @@ const deleteTicket = asyncHandler(async (req, res, next) => {
 const extendTicket = asyncHandler(async (req, res, next) => {
     try {
         const {ticketNumber} = req.body;
-        console.log(req.body);
         let readerTicket; // Определите переменную readerTicket
 
         if (!ticketNumber) {
@@ -168,6 +177,15 @@ const extendTicket = asyncHandler(async (req, res, next) => {
 
         // Сохраните обновленный читательский билет
         const updatedTicket = await readerTicket.save();
+
+        // Создаем запись о событии создания билета
+        const ticketEvent = new TicketEventModel({
+            user: updatedTicket.user,
+            ticket: updatedTicket._id,
+            eventType: 'TicketUpdated', // или другой подходящий тип события
+        });
+
+        await ticketEvent.save();
 
         res.status(200).json({message: 'Читательский билет успешно продлен', updatedTicket});
     } catch (error) {

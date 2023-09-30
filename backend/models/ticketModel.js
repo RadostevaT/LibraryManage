@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const readerTicketSchema = mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User', // Ссылка на модель User, чтобы связать билет с пользователем
+        ref: 'User',
         required: true,
     },
     ticketNumber: {
