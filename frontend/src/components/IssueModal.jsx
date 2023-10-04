@@ -1,14 +1,15 @@
-import { useState } from 'react';
-import {Modal, Button, Form, InputGroup, Table, FormGroup, FormCheck, ButtonGroup, ToggleButton} from 'react-bootstrap';
-import { useSearchUsersMutation } from '../slices/usersApiSlice.js';
-import { useIssueABookMutation } from '../slices/booksApiSlice.js';
-import { toast } from 'react-toastify';
+import {useState} from 'react';
+import {Modal, Button, Form, InputGroup, Table, ButtonGroup, ToggleButton} from 'react-bootstrap';
+import {useSearchUsersMutation} from '../slices/usersApiSlice.js';
+import {useIssueABookMutation} from '../slices/booksApiSlice.js';
+import {toast} from 'react-toastify';
 import Loader from "./Loader.jsx";
 
-const IssueModal = ({ show, onHide, selectedBook }) => {
+const IssueModal = ({show, onHide, selectedBook}) => {
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState([]);
-    const [selectedUserId, setSelectedUserId] = useState(null); // Состояние для userId
+    const [selectedUserId, setSelectedUserId] = useState(null);
+    const [selectedUser, setSelectedUser] = useState(null);
 
     const [isLoading, setIsLoading] = useState(false);
 
@@ -32,11 +33,18 @@ const IssueModal = ({ show, onHide, selectedBook }) => {
     const handleIssueBook = async () => {
         if (!selectedUserId) {
             toast.error('Пожалуйста, выберите пользователя');
+            onHide();
+            return;
+        }
+
+        if (!selectedUser.readerTicket) {
+            toast.error('У пользователя отсутствует действительный читательский билет');
+            onHide();
             return;
         }
 
         try {
-            await issueABook({ bookId: selectedBook._id, userId: selectedUserId });
+            await issueABook({bookId: selectedBook._id, userId: selectedUserId});
             toast.success('Книга успешно выдана. Обновите страницу.');
             onHide();
         } catch (error) {
@@ -70,7 +78,7 @@ const IssueModal = ({ show, onHide, selectedBook }) => {
                     </Button>
                 </InputGroup>
                 {isLoading ? (
-                    <Loader />
+                    <Loader/>
                 ) : (
                     <Table striped bordered hover responsive className='mb-0'>
                         <thead>
@@ -86,21 +94,17 @@ const IssueModal = ({ show, onHide, selectedBook }) => {
                                 <td style={{verticalAlign: 'middle'}}>{index + 1}</td>
                                 <td style={{verticalAlign: 'middle'}}>{user.name}</td>
                                 <td style={{verticalAlign: 'middle'}}>
-                                    {/*<FormGroup>*/}
-                                    {/*    <FormCheck*/}
-                                    {/*        type="radio"*/}
-                                    {/*        id={`user-radio-${user._id}`}*/}
-                                    {/*        name="selectedUser"*/}
-                                    {/*        onChange={() => setSelectedUserId(user._id)}*/}
-                                    {/*    />*/}
-                                    {/*</FormGroup>*/}
                                     <ButtonGroup>
                                         <ToggleButton
-                                        type='radio'
-                                        variant={selectedUserId === user._id ? 'primary' : 'outline-primary'}
-                                        id={`user-radio-${user._id}`}
-                                        name='selectedUser'
-                                        onChange={() => setSelectedUserId(user._id)}>
+                                            type='radio'
+                                            variant={selectedUserId === user._id ? 'primary' : 'outline-primary'}
+                                            id={`user-radio-${user._id}`}
+                                            name='selectedUser'
+                                            onChange={() => {
+                                                setSelectedUserId(user._id);
+                                                setSelectedUser(user);
+                                            }}
+                                        >
                                             Выбрать
                                         </ToggleButton>
                                     </ButtonGroup>

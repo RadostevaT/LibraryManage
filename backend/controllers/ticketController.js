@@ -193,7 +193,7 @@ const extendTicket = asyncHandler(async (req, res, next) => {
     }
 });
 
-// @desc    Get reader ticket number for a user
+// @desc    Get reader ticket for a user
 // @route   GET /api/tickets/get-ticket-number
 // @access  Public
 const getTicketNumber = asyncHandler(async (req, res, next) => {
@@ -217,7 +217,7 @@ const getTicketNumber = asyncHandler(async (req, res, next) => {
             throw new Error('У пользователя нет читательского билета');
         }
 
-        const ticketNumber = user.readerTicket.ticketNumber;
+        const ticketNumber = user.readerTicket;
 
         res.status(200).json({ ticketNumber });
     } catch (error) {

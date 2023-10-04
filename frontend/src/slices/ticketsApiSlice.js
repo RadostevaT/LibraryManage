@@ -20,8 +20,18 @@ export const ticketsApiSlice = apiSlice.injectEndpoints({
                 method: 'POST',
                 body: data
             })
-        })
+        }),
+        getTicketNumber: builder.query({
+            query: (userId) => ({
+                url: `${TICKETS_URL}/get-ticket-number?userId=${userId}`,
+                method: 'GET'
+            }),
+        }),
     }),
 });
 
-export const {useExtendTicketMutation, useCreateTicketMutation} = ticketsApiSlice;
+export const {
+    useExtendTicketMutation,
+    useCreateTicketMutation,
+    useGetTicketNumberQuery
+} = ticketsApiSlice;

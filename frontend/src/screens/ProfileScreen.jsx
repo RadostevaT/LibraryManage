@@ -6,6 +6,9 @@ import {toast} from "react-toastify";
 import Loader from "../components/Loader";
 import {setCredentials} from "../slices/authSlice";
 import {useUpdateUserMutation} from "../slices/usersApiSlice";
+import {Tabs, Tab, Table} from "react-bootstrap";
+import {useGetTicketNumberQuery} from "../slices/ticketsApiSlice.js";
+import formatDateTime from "../utils/formatDateTime.js";
 
 const ProfileScreen = () => {
     const [name, setName] = useState('');
@@ -18,6 +21,8 @@ const ProfileScreen = () => {
     const {userInfo} = useSelector((state) => state.auth);
 
     const [updateProfile, {isLoading}] = useUpdateUserMutation();
+
+    const {data: ticketData, isLoading: ticketLoading, isError: ticketError} = useGetTicketNumberQuery(userInfo._id);
 
     useEffect(() => {
         setName(userInfo.name);
@@ -47,55 +52,95 @@ const ProfileScreen = () => {
     return (
         <FormContainer>
             <h1 className='mb-4'>Профиль</h1>
-            <Form onSubmit={submitHandler}>
-                <Form.Group className='my-2' controlId='name'>
-                    <Form.Label>ФИО</Form.Label>
-                    <Form.Control
-                        type='text'
-                        placeholder='Введите ФИО'
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        readOnly
-                        disabled
-                    ></Form.Control>
-                </Form.Group>
+            <Tabs
+                id="profile-tabs"
+                defaultActiveKey="profile"
+                className="mb-3"
+                justify
+            >
+                <Tab eventKey="profile" title="Профиль">
+                    <Form onSubmit={submitHandler}>
+                        <Form.Group className='my-2' controlId='name'>
+                            <Form.Label>ФИО</Form.Label>
+                            <Form.Control
+                                type='text'
+                                placeholder='Введите ФИО'
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                readOnly
+                                disabled
+                            />
+                        </Form.Group>
 
-                <Form.Group className='my-2' controlId='email'>
-                    <Form.Label>Email</Form.Label>
-                    <Form.Control
-                        type='email'
-                        placeholder='Введите email'
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                    ></Form.Control>
-                </Form.Group>
+                        <Form.Group className='my-2' controlId='email'>
+                            <Form.Label>Email</Form.Label>
+                            <Form.Control
+                                type='email'
+                                placeholder='Введите email'
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                            />
+                        </Form.Group>
 
-                <Form.Group className='my-2' controlId='password'>
-                    <Form.Label>Пароль</Form.Label>
-                    <Form.Control
-                        type='password'
-                        placeholder='Введите пароль'
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                    ></Form.Control>
-                </Form.Group>
+                        <Form.Group className='my-2' controlId='password'>
+                            <Form.Label>Пароль</Form.Label>
+                            <Form.Control
+                                type='password'
+                                placeholder='Введите пароль'
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                            />
+                        </Form.Group>
 
-                <Form.Group className='my-2' controlId='confirmPassword'>
-                    <Form.Label>Подтвердите пароль</Form.Label>
-                    <Form.Control
-                        type='password'
-                        placeholder='Введите пароль'
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmedPassword(e.target.value)}
-                    ></Form.Control>
-                </Form.Group>
+                        <Form.Group className='my-2' controlId='confirmPassword'>
+                            <Form.Label>Подтвердите пароль</Form.Label>
+                            <Form.Control
+                                type='password'
+                                placeholder='Введите пароль'
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmedPassword(e.target.value)}
+                            />
+                        </Form.Group>
 
-                {isLoading && <Loader/>}
+                        {isLoading && <Loader/>}
 
-                <Button type='submit' variant='primary' className='mt-3'>
-                    Сохранить
-                </Button>
-            </Form>
+                        <Button type='submit' variant='primary' className='mt-3'>
+                            Сохранить
+                        </Button>
+                    </Form>
+                </Tab>
+                <Tab eventKey="reader-tickets" title="Читательские билеты" disabled={userInfo.isAdmin}>
+                    {ticketLoading ? (
+                        <Loader />
+                    ) : ticketError ? (
+                        toast.error(ticketError)
+                    ) : (
+                        <Table striped bordered hover>
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Номер билета</th>
+                                <th>Действует до</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {ticketData ? (
+                                <tr>
+                                    <td>1</td>
+                                    <td>{ticketData.ticketNumber.ticketNumber}</td>
+                                    <td>{formatDateTime(ticketData.ticketNumber.expirationDate)}</td>
+                                </tr>
+                            ) : (
+                                <tr>
+                                    <td colSpan="3">Читательский билет не найден</td>
+                                </tr>
+                            )}
+                            </tbody>
+                        </Table>
+                    )}
+                </Tab>
+
+            </Tabs>
         </FormContainer>
     )
 }
