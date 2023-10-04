@@ -24,6 +24,10 @@ const bookSchema = mongoose.Schema({
     available: {
         type: Boolean,
         required: true
+    },
+    lastEventId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'BookEvent'
     }
 }, {
     timestamps: true

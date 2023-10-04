@@ -1,4 +1,3 @@
-import React from 'react';
 import {Button, Modal, ListGroup} from 'react-bootstrap';
 import formatDateTime from "../utils/formatDateTime";
 import {useExtendTicketMutation, useCreateTicketMutation} from "../slices/ticketsApiSlice";

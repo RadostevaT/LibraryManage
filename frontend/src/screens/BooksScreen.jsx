@@ -48,6 +48,10 @@ const BooksScreen = () => {
 
             const response = await searchBooks(searchQuery).unwrap();
             const arrayOfBooks = Object.values(response.data);
+
+            if (arrayOfBooks.length === 0) {
+                toast.info('Книги не найдены.');
+            }
             setBooksData(arrayOfBooks);
             setTotalBooksCount(arrayOfBooks.length);
         } catch (err) {

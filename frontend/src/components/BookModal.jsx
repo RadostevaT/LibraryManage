@@ -1,14 +1,13 @@
-import React from 'react';
 import {Button, Modal, ListGroup} from 'react-bootstrap';
 
-function AdminModal({show, onHide, bookData, onAction}) {
+function BookModal({show, onHide, bookData, onAction}) {
     if (!bookData) {
         return null; // Если данных нет, не отрисовываем модальное окно
     }
 
     const handleAction = () => {
-        onHide(); // Закрыть модальное окно
-        onAction(bookData.id, bookData.available); // Вызвать функцию onAction с идентификатором книги и флагом доступности
+        onHide();
+        onAction(bookData._id, bookData.title, bookData.author, bookData.available, bookData.lastEventId);
     };
 
     return (
@@ -43,4 +42,4 @@ function AdminModal({show, onHide, bookData, onAction}) {
     );
 }
 
-export default AdminModal;
+export default BookModal;

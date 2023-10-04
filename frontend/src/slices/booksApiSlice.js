@@ -16,7 +16,26 @@ export const booksApiSlice = apiSlice.injectEndpoints({
                 method: 'GET',
             }),
         }),
+        issueABook: builder.mutation({
+            query: (data) => ({
+                url: `${BOOKS_URL}/issue`,
+                method: 'POST',
+                body: data
+            }),
+        }),
+        returnABook: builder.mutation({
+            query: (data) => ({
+                url: `${BOOKS_URL}/return`,
+                method: 'POST',
+                body: data
+            })
+        }),
     }),
 });
 
-export const {useListOfBooksMutation, useSearchBooksMutation} = booksApiSlice;
+export const {
+    useListOfBooksMutation,
+    useSearchBooksMutation,
+    useIssueABookMutation,
+    useReturnABookMutation
+} = booksApiSlice;

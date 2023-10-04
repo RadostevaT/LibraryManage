@@ -46,7 +46,7 @@ const ProfileScreen = () => {
 
     return (
         <FormContainer>
-            <h1>Профиль</h1>
+            <h1 className='mb-4'>Профиль</h1>
             <Form onSubmit={submitHandler}>
                 <Form.Group className='my-2' controlId='name'>
                     <Form.Label>ФИО</Form.Label>
@@ -55,6 +55,8 @@ const ProfileScreen = () => {
                         placeholder='Введите ФИО'
                         value={name}
                         onChange={(e) => setName(e.target.value)}
+                        readOnly
+                        disabled
                     ></Form.Control>
                 </Form.Group>
 

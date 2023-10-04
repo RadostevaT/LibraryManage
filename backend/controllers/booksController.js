@@ -19,7 +19,13 @@ const getAllBooks = asyncHandler(async (req, res) => {
                 ],
             });
         } else {
-            books = await Book.find({});
+            books = await Book.find({})
+                .populate({
+                    path: 'lastEventId',
+                    populate: {
+                        path: 'user',
+                    },
+                });
         }
 
         res.status(200).json({
@@ -78,29 +84,28 @@ const updateBookById = asyncHandler(async (req, res) => {
 // @access  Private
 const issueBook = asyncHandler(async (req, res) => {
     try {
-        const { userId, bookId } = req.body;
+        const {userId, bookId} = req.body;
 
         // Проверьте, доступна ли книга
         const book = await Book.findById(bookId);
 
         if (!book) {
-            return res.status(404).json({ message: 'Книга не найдена' });
+            return res.status(404).json({message: 'Книга не найдена'});
         }
 
         if (!book.available) {
-            return res.status(400).json({ message: 'Книга недоступна для выдачи' });
+            return res.status(400).json({message: 'Книга недоступна для выдачи'});
         }
 
         // Проверьте наличие у пользователя читательского билета
         const user = await User.findById(userId);
 
         if (!user || !user.readerTicket) {
-            return res.status(400).json({ message: 'У пользователя нет читательского билета' });
+            return res.status(400).json({message: 'У пользователя нет читательского билета'});
         }
 
         // Обновите доступность книги
         book.available = false;
-        await book.save();
 
         // Создайте запись о событии выдачи книги
         const bookEvent = new BookEvent({
@@ -111,10 +116,14 @@ const issueBook = asyncHandler(async (req, res) => {
 
         await bookEvent.save();
 
-        res.status(200).json({ message: 'Книга успешно выдана' });
+        book.lastEventId = bookEvent._id;
+
+        await book.save();
+
+        res.status(200).json({message: 'Книга успешно выдана'});
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Произошла ошибка при выдаче книги' });
+        res.status(500).json({message: 'Произошла ошибка при выдаче книги'});
     }
 });
 
@@ -123,37 +132,34 @@ const issueBook = asyncHandler(async (req, res) => {
 // @access  Private
 const returnBook = asyncHandler(async (req, res) => {
     try {
-        const { userId, bookId } = req.body;
+        const {bookId, userId} = req.body;
 
         // Проверьте, существует ли книга с указанным ID
         const book = await Book.findById(bookId);
 
-        if (!book) {
-            return res.status(404).json({ message: 'Книга не найдена' });
-        }
-
-        // Проверьте, доступна ли книга для возврата
-        if (book.available) {
-            return res.status(400).json({ message: 'Книга уже доступна' });
+        if (!book || book.available) {
+            return res.status(404).json({message: 'Книга не может быть возвращена'});
         }
 
         // Обновите доступность книги
         book.available = true;
-        await book.save();
 
         // Создайте запись о событии возврата книги
-        const bookEvent = new BookEvent({
+        const createBookEvent = new BookEvent({
             user: userId,
             book: bookId,
             eventType: 'BookReturned',
         });
 
-        await bookEvent.save();
+        await createBookEvent.save();
+        book.lastEventId = createBookEvent._id;
 
-        res.status(200).json({ message: 'Книга успешно возвращена' });
+        await book.save();
+
+        res.status(200).json({message: 'Книга успешно возвращена'});
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Произошла ошибка при возврате книги' });
+        res.status(500).json({message: 'Произошла ошибка при возврате книги'});
     }
 });
 

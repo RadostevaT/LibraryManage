@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {Button, Table, Pagination, Form, InputGroup} from 'react-bootstrap';
 import ReadersList from '../components/ReadersList';
 import {useFetchUsersMutation, useSearchUsersMutation} from '../slices/usersApiSlice';
@@ -47,10 +47,16 @@ const TicketsScreen = () => {
             setCurrentPage(1);
 
             const response = await searchUsers(searchQuery).unwrap();
-            await response;
             const arrayOfUsers = Object.values(response);
+
+            if (arrayOfUsers.length === 0) {
+                // Если список пользователей пуст, выведите сообщение
+                toast.info('Пользователи не найдены.');
+            }
+
             setUsersData(arrayOfUsers);
             setTotalUsersCount(arrayOfUsers.length);
+
         } catch (err) {
             toast.error(err?.data?.message || err.error);
         }
@@ -98,8 +104,7 @@ const TicketsScreen = () => {
                             <Button variant="outline-primary" onClick={() => {
                                 setSelectedUser(user);
                                 setModalShow(true)
-                            }
-                            }>
+                            }}>
                                 Подробнее
                             </Button>
                         </td>
