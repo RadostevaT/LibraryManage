@@ -20,6 +20,7 @@ import ProfileScreen from "./screens/ProfileScreen";
 import BooksScreen from "./screens/BooksScreen";
 import AdminBooksScreen from "./screens/AdminBooksScreen";
 import TicketsScreen from "./screens/TicketsScreen";
+import ReportsScreen from "./screens/ReportsScreen";
 
 const router = createBrowserRouter(
     createRoutesFromElements(
@@ -44,6 +45,9 @@ const router = createBrowserRouter(
             </Route>
             <Route path='' element={<PrivateRoute roles={['admin']}/>}>
                 <Route path='/tickets' element={<TicketsScreen/>}/>
+            </Route>
+            <Route path='' element={<PrivateRoute roles={['admin']}/>}>
+                <Route path='/reports' element={<ReportsScreen/>}/>
             </Route>
 
             {/* Redirect to Home Screen for Non-existent Routes */}

@@ -182,7 +182,7 @@ const extendTicket = asyncHandler(async (req, res, next) => {
         const ticketEvent = new TicketEventModel({
             user: updatedTicket.user,
             ticket: updatedTicket._id,
-            eventType: 'TicketUpdated', // или другой подходящий тип события
+            eventType: 'TicketUpdated',
         });
 
         await ticketEvent.save();

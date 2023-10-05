@@ -1,28 +1,26 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import {useState, useEffect} from 'react';
 import BooksList from "../components/BooksList";
-import { useListOfBooksMutation, useSearchBooksMutation } from "../slices/booksApiSlice";
-import { useDispatch, useSelector } from "react-redux";
-import { toast } from "react-toastify";
-import { Table, Pagination, InputGroup, Form, Button } from "react-bootstrap";
+import {useListOfBooksMutation, useSearchBooksMutation} from "../slices/booksApiSlice";
+import {toast} from "react-toastify";
+import {Table, Pagination, InputGroup, Form, Button} from "react-bootstrap";
+import Loader from "../components/Loader.jsx";
 
 const BooksScreen = () => {
-    const navigate = useNavigate();
-    const dispatch = useDispatch();
+    const [booksList, {isLoading}] = useListOfBooksMutation();
+    const [searchBooks] = useSearchBooksMutation();
 
-    const [booksList, { isLoading }] = useListOfBooksMutation();
     const [booksData, setBooksData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const booksPerPage = 10;
     const [totalBooksCount, setTotalBooksCount] = useState(0);
     const [searchQuery, setSearchQuery] = useState('');
+    const [tempSearchQuery, setTempSearchQuery] = useState('');
 
-    const [searchBooks] = useSearchBooksMutation();
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await booksList({ query: searchQuery }).unwrap();
+                const response = await booksList({query: searchQuery}).unwrap();
                 const arrayOfBooks = Object.values(response.data);
                 setBooksData(arrayOfBooks);
                 setTotalBooksCount(arrayOfBooks.length);
@@ -42,11 +40,16 @@ const BooksScreen = () => {
         setCurrentPage(pageNumber);
     };
 
+    // Обработчик изменения значения поисковой строки
+    const handleInputChange = (e) => {
+        setTempSearchQuery(e.target.value); // Сохраняем временное значение
+    };
+
     const handleSearch = async () => {
         try {
             setCurrentPage(1);
 
-            const response = await searchBooks(searchQuery).unwrap();
+            const response = await searchBooks(tempSearchQuery).unwrap();
             const arrayOfBooks = Object.values(response.data);
 
             if (arrayOfBooks.length === 0) {
@@ -74,9 +77,9 @@ const BooksScreen = () => {
                     placeholder="Поиск по названию или автору"
                     aria-label="Поиск по названию или автору"
                     aria-describedby="basic-addon2"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    onKeyPress={handleKeyPress} // Добавляем обработчик нажатия клавиши
+                    value={tempSearchQuery}
+                    onChange={handleInputChange}
+                    onKeyPress={handleKeyPress}
                 />
                 <Button variant="outline-secondary" id="button-addon2" onClick={handleSearch}>
                     Поиск
@@ -94,16 +97,16 @@ const BooksScreen = () => {
                 </thead>
                 <tbody>
                 {currentBooks.map((book, index) => (<tr key={book._id}>
-                    <td style={{ verticalAlign: 'middle' }}>{index + 1 + (currentPage - 1) * booksPerPage}</td>
-                    <td style={{ verticalAlign: 'middle' }}>{book.title}</td>
-                    <td style={{ verticalAlign: 'middle' }}>{book.author}</td>
-                    <td style={{ verticalAlign: 'middle' }}>{book.publishYear}</td>
-                    <td style={{ verticalAlign: 'middle' }}>{book.available ? 'Да' : 'Нет'}</td>
+                    <td style={{verticalAlign: 'middle'}}>{index + 1 + (currentPage - 1) * booksPerPage}</td>
+                    <td style={{verticalAlign: 'middle'}}>{book.title}</td>
+                    <td style={{verticalAlign: 'middle'}}>{book.author}</td>
+                    <td style={{verticalAlign: 'middle'}}>{book.publishYear}</td>
+                    <td style={{verticalAlign: 'middle'}}>{book.available ? 'Да' : 'Нет'}</td>
                 </tr>))}
                 </tbody>
             </Table>
 
-            {isLoading}
+            {isLoading && <Loader/>}
 
             <Pagination>
                 <Pagination.First onClick={() => handlePageChange(1)}/>

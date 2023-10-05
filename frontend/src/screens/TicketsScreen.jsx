@@ -4,19 +4,22 @@ import ReadersList from '../components/ReadersList';
 import {useFetchUsersMutation, useSearchUsersMutation} from '../slices/usersApiSlice';
 import {toast} from 'react-toastify';
 import TicketsModal from '../components/TicketsModal';
+import Loader from "../components/Loader.jsx";
 
 const TicketsScreen = () => {
     const [usersList, {isLoading}] = useFetchUsersMutation();
+    const [searchUsers] = useSearchUsersMutation();
+
     const [usersData, setUsersData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const usersPerPage = 10;
     const [totalUsersCount, setTotalUsersCount] = useState(0);
     const [searchQuery, setSearchQuery] = useState('');
+    const [tempSearchQuery, setTempSearchQuery] = useState('');
 
     const [modalShow, setModalShow] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
 
-    const [searchUsers] = useSearchUsersMutation();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -42,11 +45,16 @@ const TicketsScreen = () => {
         setCurrentPage(pageNumber);
     };
 
+    // Обработчик изменения значения поисковой строки
+    const handleInputChange = (e) => {
+        setTempSearchQuery(e.target.value); // Сохраняем временное значение
+    };
+
     const handleSearch = async () => {
         try {
             setCurrentPage(1);
 
-            const response = await searchUsers(searchQuery).unwrap();
+            const response = await searchUsers(tempSearchQuery).unwrap();
             const arrayOfUsers = Object.values(response);
 
             if (arrayOfUsers.length === 0) {
@@ -77,8 +85,8 @@ const TicketsScreen = () => {
                     placeholder="Поиск по имени"
                     aria-label="Поиск по имени"
                     aria-describedby="basic-addon2"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
+                    value={tempSearchQuery}
+                    onChange={handleInputChange}
                     onKeyPress={handleKeyPress}
                 />
                 <Button variant="outline-secondary" id="button-addon2" onClick={handleSearch}>
@@ -114,7 +122,7 @@ const TicketsScreen = () => {
             </Table>
             <TicketsModal show={modalShow} onHide={() => setModalShow(false)} userData={selectedUser}/>
 
-            {isLoading}
+            {isLoading && <Loader />}
 
             <Pagination>
                 <Pagination.First onClick={() => handlePageChange(1)}/>

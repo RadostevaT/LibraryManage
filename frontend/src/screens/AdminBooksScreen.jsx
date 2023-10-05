@@ -9,6 +9,7 @@ import {Table, Pagination, InputGroup, Form, Button} from 'react-bootstrap';
 import BookModal from '../components/BookModal.jsx';
 import IssueModal from '../components/IssueModal.jsx';
 import ReturnModal from "../components/ReturnModal.jsx";
+import Loader from "../components/Loader.jsx";
 
 const AdminBooksScreen = () => {
     // Мутации для получения списка книг, поиска и выдачи книги
@@ -21,6 +22,7 @@ const AdminBooksScreen = () => {
     const booksPerPage = 10;
     const [totalBooksCount, setTotalBooksCount] = useState(0);
     const [searchQuery, setSearchQuery] = useState('');
+    const [tempSearchQuery, setTempSearchQuery] = useState('');
 
     // Состояния для модальных окон
     const [modalShow, setModalShow] = useState(false);
@@ -54,12 +56,17 @@ const AdminBooksScreen = () => {
         setCurrentPage(pageNumber);
     };
 
+    // Обработчик изменения значения поисковой строки
+    const handleInputChange = (e) => {
+        setTempSearchQuery(e.target.value); // Сохраняем временное значение
+    };
+
     // Обработчик поискового запроса
     const handleSearch = async () => {
         try {
             setCurrentPage(1);
 
-            const response = await searchBooks(searchQuery).unwrap();
+            const response = await searchBooks(tempSearchQuery).unwrap();
             const arrayOfBooks = Object.values(response.data);
 
             if (arrayOfBooks.length === 0) {
@@ -105,8 +112,8 @@ const AdminBooksScreen = () => {
                     placeholder="Поиск по названию или автору"
                     aria-label="Поиск по названию или автору"
                     aria-describedby="basic-addon2"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
+                    value={tempSearchQuery}
+                    onChange={handleInputChange}
                     onKeyPress={handleKeyPress}
                 />
                 <Button variant="outline-secondary" id="button-addon2" onClick={handleSearch}>
@@ -161,7 +168,7 @@ const AdminBooksScreen = () => {
                 selectedBook={selectedBook}
             />
 
-            {isLoading}
+            {isLoading && <Loader />}
 
             <Pagination>
                 <Pagination.First onClick={() => handlePageChange(1)}/>
