@@ -2,10 +2,12 @@ import {Modal, Button, ListGroup} from "react-bootstrap";
 import formatDateTime from "../utils/formatDateTime.js";
 
 function EventsModal({show, onHide, event}) {
+    // Если данных о событии нет, не отрисовываем модальное окно
     if (!event) {
         return null;
     }
 
+    // Маппинг типов событий на текстовое описание
     const eventTypesMapping = {
         TicketCreated: 'Читательский билет выдан',
         TicketUpdated: 'Читательский билет продлен',
@@ -21,6 +23,7 @@ function EventsModal({show, onHide, event}) {
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body className="grid-example">
+                {/* Отображение информации о событии, если оно связано с книгой */}
                 {event.eventType.startsWith('Book') && (
                     <ListGroup>
                         <ListGroup.Item>Книга: {event.book.title} ({event.book.author})</ListGroup.Item>
@@ -29,6 +32,8 @@ function EventsModal({show, onHide, event}) {
                         <ListGroup.Item>Время события: {formatDateTime(event.createdAt)}</ListGroup.Item>
                     </ListGroup>
                 )}
+
+                {/* Отображение информации о событии, если оно связано с читательским билетом */}
                 {event.eventType.startsWith('Ticket') && (
                     <ListGroup>
                         <ListGroup.Item>Читательский билет: №{event.ticket.ticketNumber}</ListGroup.Item>
@@ -42,7 +47,7 @@ function EventsModal({show, onHide, event}) {
                 <Button onClick={onHide}>Закрыть</Button>
             </Modal.Footer>
         </Modal>
-    )
+    );
 }
 
 export default EventsModal;

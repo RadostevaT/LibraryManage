@@ -1,14 +1,14 @@
 import {useState, useEffect} from 'react';
-import {useDispatch, useSelector} from "react-redux";
-import {Form, Button} from "react-bootstrap";
-import FormContainer from "../components/FormContainer";
-import {toast} from "react-toastify";
-import Loader from "../components/Loader";
-import {setCredentials} from "../slices/authSlice";
-import {useUpdateUserMutation} from "../slices/usersApiSlice";
-import {Tabs, Tab, Table} from "react-bootstrap";
-import {useGetTicketNumberQuery} from "../slices/ticketsApiSlice.js";
-import formatDateTime from "../utils/formatDateTime.js";
+import {useDispatch, useSelector} from 'react-redux';
+import {Form, Button} from 'react-bootstrap';
+import FormContainer from '../components/FormContainer';
+import {toast} from 'react-toastify';
+import Loader from '../components/Loader';
+import {setCredentials} from '../slices/authSlice';
+import {useUpdateUserMutation} from '../slices/usersApiSlice';
+import {Tabs, Tab, Table} from 'react-bootstrap';
+import {useGetTicketNumberQuery} from '../slices/ticketsApiSlice.js';
+import formatDateTime from '../utils/formatDateTime.js';
 
 const ProfileScreen = () => {
     const [name, setName] = useState('');
@@ -22,17 +22,21 @@ const ProfileScreen = () => {
 
     const [updateProfile, {isLoading}] = useUpdateUserMutation();
 
-    const {data: ticketData, isLoading: ticketLoading, isError: ticketError} = useGetTicketNumberQuery(userInfo._id);
+    const {
+        data: ticketData,
+        isLoading: ticketLoading,
+        isError: ticketError,
+    } = useGetTicketNumberQuery(userInfo._id);
 
     useEffect(() => {
         setName(userInfo.name);
         setEmail(userInfo.email);
-    }, [userInfo.setName, userInfo.setEmail]);
+    }, [userInfo.name, userInfo.email]);
 
     const submitHandler = async (e) => {
         e.preventDefault();
         if (password !== confirmPassword) {
-            toast.error('Пароли не совпадают')
+            toast.error('Пароли не совпадают');
         } else {
             try {
                 const res = await updateProfile({
@@ -43,22 +47,25 @@ const ProfileScreen = () => {
                 }).unwrap();
                 dispatch(setCredentials(res));
                 toast.success('Данные сохранены');
+
+                setPassword('');
+                setConfirmedPassword('');
             } catch (err) {
                 toast.error(err?.data?.message || err.error);
             }
         }
-    }
+    };
 
     return (
         <FormContainer>
             <h1 className='mb-4'>Профиль</h1>
             <Tabs
-                id="profile-tabs"
-                defaultActiveKey="profile"
-                className="mb-3"
+                id='profile-tabs'
+                defaultActiveKey='profile'
+                className='mb-3'
                 justify
             >
-                <Tab eventKey="profile" title="Профиль">
+                <Tab eventKey='profile' title='Профиль'>
                     <Form onSubmit={submitHandler}>
                         <Form.Group className='my-2' controlId='name'>
                             <Form.Label>ФИО</Form.Label>
@@ -109,9 +116,13 @@ const ProfileScreen = () => {
                         </Button>
                     </Form>
                 </Tab>
-                <Tab eventKey="reader-tickets" title="Читательские билеты" disabled={userInfo.isAdmin}>
+                <Tab
+                    eventKey='reader-tickets'
+                    title='Читательские билеты'
+                    disabled={userInfo.isAdmin}
+                >
                     {ticketLoading ? (
-                        <Loader />
+                        <Loader/>
                     ) : ticketError ? (
                         toast.error(ticketError)
                     ) : (
@@ -132,17 +143,16 @@ const ProfileScreen = () => {
                                 </tr>
                             ) : (
                                 <tr>
-                                    <td colSpan="3">Читательский билет не найден</td>
+                                    <td colSpan='3'>Читательский билет не найден</td>
                                 </tr>
                             )}
                             </tbody>
                         </Table>
                     )}
                 </Tab>
-
             </Tabs>
         </FormContainer>
-    )
-}
+    );
+};
 
 export default ProfileScreen;

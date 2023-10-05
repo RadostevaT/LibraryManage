@@ -1,9 +1,9 @@
 import {useState, useEffect} from 'react';
-import BooksList from "../components/BooksList";
-import {useListOfBooksMutation, useSearchBooksMutation} from "../slices/booksApiSlice";
-import {toast} from "react-toastify";
-import {Table, Pagination, InputGroup, Form, Button} from "react-bootstrap";
-import Loader from "../components/Loader.jsx";
+import BooksList from '../components/BooksList';
+import {useListOfBooksMutation, useSearchBooksMutation} from '../slices/booksApiSlice';
+import {toast} from 'react-toastify';
+import {Table, Pagination, InputGroup, Form, Button} from 'react-bootstrap';
+import Loader from '../components/Loader.jsx';
 
 const BooksScreen = () => {
     const [booksList, {isLoading}] = useListOfBooksMutation();
@@ -15,7 +15,6 @@ const BooksScreen = () => {
     const [totalBooksCount, setTotalBooksCount] = useState(0);
     const [searchQuery, setSearchQuery] = useState('');
     const [tempSearchQuery, setTempSearchQuery] = useState('');
-
 
     useEffect(() => {
         const fetchData = async () => {
@@ -32,6 +31,7 @@ const BooksScreen = () => {
         fetchData();
     }, [booksList, searchQuery]);
 
+    // Вычисление индексов первой и последней книги на текущей странице
     const indexOfLastBook = currentPage * booksPerPage;
     const indexOfFirstBook = indexOfLastBook - booksPerPage;
     const currentBooks = booksData.slice(indexOfFirstBook, indexOfLastBook);
@@ -40,7 +40,6 @@ const BooksScreen = () => {
         setCurrentPage(pageNumber);
     };
 
-    // Обработчик изменения значения поисковой строки
     const handleInputChange = (e) => {
         setTempSearchQuery(e.target.value); // Сохраняем временное значение
     };
@@ -62,7 +61,6 @@ const BooksScreen = () => {
         }
     };
 
-    // Обработчик нажатия клавиши Enter
     const handleKeyPress = (event) => {
         if (event.key === 'Enter') {
             handleSearch();
@@ -72,6 +70,7 @@ const BooksScreen = () => {
     return (
         <BooksList>
             <h1 className='mb-4'>Каталог книг</h1>
+
             <InputGroup className="mb-3">
                 <Form.Control
                     placeholder="Поиск по названию или автору"
@@ -85,6 +84,7 @@ const BooksScreen = () => {
                     Поиск
                 </Button>
             </InputGroup>
+
             <Table striped bordered hover responsive className='mb-4'>
                 <thead>
                 <tr>
@@ -96,13 +96,15 @@ const BooksScreen = () => {
                 </tr>
                 </thead>
                 <tbody>
-                {currentBooks.map((book, index) => (<tr key={book._id}>
-                    <td style={{verticalAlign: 'middle'}}>{index + 1 + (currentPage - 1) * booksPerPage}</td>
-                    <td style={{verticalAlign: 'middle'}}>{book.title}</td>
-                    <td style={{verticalAlign: 'middle'}}>{book.author}</td>
-                    <td style={{verticalAlign: 'middle'}}>{book.publishYear}</td>
-                    <td style={{verticalAlign: 'middle'}}>{book.available ? 'Да' : 'Нет'}</td>
-                </tr>))}
+                {currentBooks.map((book, index) => (
+                    <tr key={book._id}>
+                        <td style={{verticalAlign: 'middle'}}>{index + 1 + (currentPage - 1) * booksPerPage}</td>
+                        <td style={{verticalAlign: 'middle'}}>{book.title}</td>
+                        <td style={{verticalAlign: 'middle'}}>{book.author}</td>
+                        <td style={{verticalAlign: 'middle'}}>{book.publishYear}</td>
+                        <td style={{verticalAlign: 'middle'}}>{book.available ? 'Да' : 'Нет'}</td>
+                    </tr>
+                ))}
                 </tbody>
             </Table>
 
@@ -111,19 +113,20 @@ const BooksScreen = () => {
             <Pagination>
                 <Pagination.First onClick={() => handlePageChange(1)}/>
                 <Pagination.Prev onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}/>
-                {Array.from({length: Math.ceil(totalBooksCount / booksPerPage)}, (_, i) => (<Pagination.Item
-                    key={i + 1}
-                    active={i + 1 === currentPage}
-                    onClick={() => handlePageChange(i + 1)}
-                >
-                    {i + 1}
-                </Pagination.Item>))}
+                {Array.from({length: Math.ceil(totalBooksCount / booksPerPage)}, (_, i) => (
+                    <Pagination.Item
+                        key={i + 1}
+                        active={i + 1 === currentPage}
+                        onClick={() => handlePageChange(i + 1)}>
+                        {i + 1}
+                    </Pagination.Item>
+                ))}
                 <Pagination.Next onClick={() => handlePageChange(currentPage + 1)}
                                  disabled={currentPage === Math.ceil(totalBooksCount / booksPerPage)}/>
                 <Pagination.Last onClick={() => handlePageChange(Math.ceil(totalBooksCount / booksPerPage))}/>
             </Pagination>
         </BooksList>
-    )
-}
+    );
+};
 
 export default BooksScreen;

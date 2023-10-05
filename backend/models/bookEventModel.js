@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 
+// Схема для событий с книгами
 const bookEventSchema = mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
@@ -17,7 +18,7 @@ const bookEventSchema = mongoose.Schema({
     }
 }, {
     timestamps: true,
-    collection: 'bookEvents'
+    collection: 'bookEvents' // Название коллекции в базе данных
 });
 
 const BookEvent = mongoose.model('BookEvent', bookEventSchema);

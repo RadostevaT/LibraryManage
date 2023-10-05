@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 
+// Схема для пользователей
 const userSchema = mongoose.Schema({
     name: {
         type: String,
@@ -24,12 +25,13 @@ const userSchema = mongoose.Schema({
         ref: 'ReaderTicket',
         unique: true,
         sparse: true,
-        partialFilterExpression: { readerTicket: { $exists: true } },
+        partialFilterExpression: {readerTicket: {$exists: true}},
     },
 }, {
     timestamps: true
 });
 
+// Хэширование пароля перед сохранением пользователя
 userSchema.pre('save', async function (next) {
     if (!this.isModified('password')) {
         next();
@@ -39,6 +41,7 @@ userSchema.pre('save', async function (next) {
     this.password = await bcrypt.hash(this.password, salt);
 });
 
+// Метод для проверки совпадения паролей
 userSchema.methods.matchPassword = async function (enteredPassword) {
     return await bcrypt.compare(enteredPassword, this.password);
 }

@@ -1,14 +1,17 @@
+import {useState} from 'react';
 import {Button, Modal, ListGroup} from 'react-bootstrap';
-import formatDateTime from "../utils/formatDateTime";
-import {useExtendTicketMutation, useCreateTicketMutation} from "../slices/ticketsApiSlice";
-import {toast} from "react-toastify";
+import formatDateTime from '../utils/formatDateTime';
+import {useExtendTicketMutation, useCreateTicketMutation} from '../slices/ticketsApiSlice';
+import {toast} from 'react-toastify';
+import Loader from './Loader';
 
 function TicketsModal({show, onHide, userData}) {
     const [extendTicket] = useExtendTicketMutation();
     const [createTicket] = useCreateTicketMutation();
+    const [isLoading, setIsLoading] = useState(false);
 
     if (!userData) {
-        return null; // Если данных нет, не отрисовываем модальное окно
+        return null;
     }
 
     const hasReaderTicket = userData.readerTicket;
@@ -18,12 +21,18 @@ function TicketsModal({show, onHide, userData}) {
             const {readerTicket} = userData;
             const {ticketNumber} = readerTicket;
 
+            setIsLoading(true);
+
             await extendTicket({ticketNumber: ticketNumber});
+
+            setIsLoading(false);
 
             toast.success('Билет успешно продлен');
 
             onHide();
         } catch (error) {
+            setIsLoading(false);
+
             toast.error('Ошибка при продлении билета');
         }
     };
@@ -32,12 +41,18 @@ function TicketsModal({show, onHide, userData}) {
         try {
             const {email} = userData;
 
+            setIsLoading(true);
+
             await createTicket({email: email});
+
+            setIsLoading(false);
 
             toast.success('Билет успешно выдан');
 
             onHide();
         } catch (error) {
+            setIsLoading(false);
+
             toast.error('Ошибка при создании билета');
         }
     };
@@ -54,10 +69,9 @@ function TicketsModal({show, onHide, userData}) {
                     <ListGroup.Item>Имя: {userData.name}</ListGroup.Item>
                     <ListGroup.Item>Email: {userData.email}</ListGroup.Item>
                     <ListGroup.Item>
-                        {hasReaderTicket && (
+                        {hasReaderTicket ? (
                             <span>Читательский билет: №{userData.readerTicket.ticketNumber}</span>
-                        )}
-                        {!hasReaderTicket && (
+                        ) : (
                             <span>Читательский билет: Нет</span>
                         )}
                     </ListGroup.Item>
@@ -72,7 +86,9 @@ function TicketsModal({show, onHide, userData}) {
                 </ListGroup>
             </Modal.Body>
             <Modal.Footer>
-                {hasReaderTicket ? (
+                {isLoading ? (
+                    <Loader/>
+                ) : hasReaderTicket ? (
                     <Button variant="success" onClick={handleExtendTicket}>
                         Продлить
                     </Button>

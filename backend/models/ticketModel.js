@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 
+// Схема для читательских билетов
 const readerTicketSchema = mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,

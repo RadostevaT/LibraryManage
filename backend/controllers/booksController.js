@@ -33,7 +33,8 @@ const getAllBooks = asyncHandler(async (req, res) => {
             data: books,
         });
     } catch (error) {
-        res.status(500).json({message: 'Something went wrong'});
+        console.error(error);
+        res.status(500).json({message: 'Произошла ошибка'});
     }
 });
 
@@ -48,10 +49,11 @@ const getBookById = asyncHandler(async (req, res) => {
         if (book) {
             res.status(200).json(book);
         } else {
-            res.status(404).json({message: 'Book not found'});
+            res.status(404).json({message: 'Книга не найдена'});
         }
     } catch (error) {
-        res.status(500).json({message: 'Something went wrong'});
+        console.error(error);
+        res.status(500).json({message: 'Произошла ошибка'});
     }
 });
 
@@ -64,17 +66,18 @@ const updateBookById = asyncHandler(async (req, res) => {
         const {title, author, publishYear} = req.body;
 
         if (!title || !author || !publishYear) {
-            return res.status(400).json({message: 'Send all fields'});
+            return res.status(400).json({message: 'Заполните все поля'});
         }
 
         const updatedBook = await Book.findByIdAndUpdate(id, req.body);
 
         if (updatedBook) {
-            res.status(200).json({message: 'Success'});
+            res.status(200).json({message: 'Успешно'});
         } else {
-            res.status(404).json({message: 'Book not updated'});
+            res.status(404).json({message: 'Книга не обновлена'});
         }
     } catch (error) {
+        console.error(error);
         res.status(500).json({message: error.message});
     }
 });
@@ -86,7 +89,7 @@ const issueBook = asyncHandler(async (req, res) => {
     try {
         const {userId, bookId} = req.body;
 
-        // Проверьте, доступна ли книга
+        // Проверка доступности книги
         const book = await Book.findById(bookId);
 
         if (!book) {
@@ -97,17 +100,17 @@ const issueBook = asyncHandler(async (req, res) => {
             return res.status(400).json({message: 'Книга недоступна для выдачи'});
         }
 
-        // Проверьте наличие у пользователя читательского билета
+        // Проверка наличия читательского билета у пользователя
         const user = await User.findById(userId);
 
         if (!user || !user.readerTicket) {
             return res.status(400).json({message: 'У пользователя нет читательского билета'});
         }
 
-        // Обновите доступность книги
+        // Обновление доступности книги
         book.available = false;
 
-        // Создайте запись о событии выдачи книги
+        // Создание записи о событии выдачи книги
         const bookEvent = new BookEvent({
             user: userId,
             book: bookId,
@@ -134,17 +137,17 @@ const returnBook = asyncHandler(async (req, res) => {
     try {
         const {bookId, userId} = req.body;
 
-        // Проверьте, существует ли книга с указанным ID
+        // Проверка существования книги по указанному ID
         const book = await Book.findById(bookId);
 
         if (!book || book.available) {
-            return res.status(404).json({message: 'Книга не может быть возвращена'});
+            return res.status(404).json({message: 'Книгу нельзя вернуть'});
         }
 
-        // Обновите доступность книги
+        // Обновление доступности книги
         book.available = true;
 
-        // Создайте запись о событии возврата книги
+        // Создание записи о событии возврата книги
         const createBookEvent = new BookEvent({
             user: userId,
             book: bookId,

@@ -1,40 +1,54 @@
 import {useState} from 'react';
 import {Modal, Button, Table} from 'react-bootstrap';
-import {useReturnABookMutation} from "../slices/booksApiSlice";
-import {toast} from "react-toastify";
+import {useReturnABookMutation} from '../slices/booksApiSlice';
+import {toast} from 'react-toastify';
+import Loader from './Loader';
 
 const ReturnModal = ({show, onHide, selectedBook}) => {
     const [returnBook] = useReturnABookMutation();
+    const [loading, setLoading] = useState(false);
 
     const handleReturnBook = async () => {
         try {
             if (!selectedBook) {
-                toast.error('Попробуйте обновить страницу');
+                toast.error('Выберите книгу.');
                 return;
             }
 
-            // Выполните запрос на возврат книги, передавая ID книги
+            setLoading(true);
+
             const response = await returnBook({
                 bookId: selectedBook._id,
-                userId: selectedBook.lastEventId?.user?._id
+                userId: selectedBook.lastEventId?.user?._id,
             });
 
-            // Обработайте успешный ответ и покажите уведомление об успешном возврате
-            toast.success('Книга возвращена. Обновите страницу.');
+            setLoading(false);
 
-            onHide();
+            if (response.error) {
+                toast.error('Ошибка при возврате книги. Попробуйте позже.');
+            } else {
+                toast.success('Книга успешно возвращена. Обновите страницу.');
+                onHide();
+            }
         } catch (error) {
-            toast.error('Неизвестная ошибка. Попробуйте обновить страницу.');
+            setLoading(false);
+            toast.error('Неизвестная ошибка. Попробуйте позже.');
         }
     };
 
     return (
-        <Modal size="lg" show={show} onHide={onHide} centered aria-labelledby="contained-modal-title-vcenter">
+        <Modal
+            size="lg"
+            show={show}
+            onHide={onHide}
+            centered
+            aria-labelledby="contained-modal-title-vcenter"
+        >
             <Modal.Header closeButton>
                 <Modal.Title>Информация о возврате книги</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <Table striped bordered hover responsive className='mb-0'>
+                <Table striped bordered hover responsive className="mb-0">
                     <thead>
                     <tr>
                         <th>Имя пользователя</th>
@@ -48,15 +62,21 @@ const ReturnModal = ({show, onHide, selectedBook}) => {
                                 ? `${selectedBook.lastEventId.user.name}`
                                 : ''}
                         </td>
-                        <td style={{verticalAlign: 'middle'}}>{selectedBook ? `${selectedBook.title} (${selectedBook.author})` : ''}</td>
+                        <td style={{verticalAlign: 'middle'}}>
+                            {selectedBook ? `${selectedBook.title} (${selectedBook.author})` : ''}
+                        </td>
                     </tr>
                     </tbody>
                 </Table>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="danger" onClick={handleReturnBook}>
-                    Вернуть книгу
-                </Button>
+                {loading ? (
+                    <Loader/>
+                ) : (
+                    <Button variant="danger" onClick={handleReturnBook} disabled={loading}>
+                        Вернуть книгу
+                    </Button>
+                )}
             </Modal.Footer>
         </Modal>
     );

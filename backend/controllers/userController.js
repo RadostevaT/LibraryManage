@@ -16,8 +16,8 @@ const authUser = asyncHandler(async (req, res) => {
             _id: user._id,
             name: user.name,
             email: user.email,
-            isAdmin: user.isAdmin
-        })
+            isAdmin: user.isAdmin,
+        });
     } else {
         res.status(401);
         throw new Error('Неправильный логин или пароль');
@@ -30,7 +30,7 @@ const authUser = asyncHandler(async (req, res) => {
 const registerUser = asyncHandler(async (req, res) => {
     const {name, email, password} = req.body;
 
-    const userExists = await User.findOne({email})
+    const userExists = await User.findOne({email});
 
     if (userExists) {
         res.status(400);
@@ -41,7 +41,7 @@ const registerUser = asyncHandler(async (req, res) => {
         name,
         email,
         password,
-        isAdmin: false, // Устанавливаем значение isAdmin как false при регистрации
+        isAdmin: false,
     });
 
     if (user) {
@@ -51,7 +51,7 @@ const registerUser = asyncHandler(async (req, res) => {
             name: user.name,
             email: user.email,
             isAdmin: user.isAdmin,
-        })
+        });
     } else {
         res.status(400);
         throw new Error('Invalid user data');
@@ -64,10 +64,10 @@ const registerUser = asyncHandler(async (req, res) => {
 const logoutUser = asyncHandler(async (req, res) => {
     res.cookie('jwt', '', {
         httpOnly: true,
-        expires: new Date(0)
-    })
+        expires: new Date(0),
+    });
 
-    res.status(200).json({message: 'User logged out'})
+    res.status(200).json({message: 'User logged out'});
 });
 
 // @desc    Get user profile
@@ -77,10 +77,10 @@ const getUserProfile = asyncHandler(async (req, res) => {
     const user = {
         _id: req.user._id,
         name: req.user.name,
-        email: req.user.email
-    }
+        email: req.user.email,
+    };
 
-    res.status(200).json(user)
+    res.status(200).json(user);
 });
 
 // @desc    Update user profile
@@ -102,11 +102,11 @@ const updateUserProfile = asyncHandler(async (req, res) => {
         res.status(200).json({
             _id: updatedUser._id,
             name: updatedUser.name,
-            email: updatedUser.email
-        })
+            email: updatedUser.email,
+        });
     } else {
         res.status(404);
-        throw new Error('User not found')
+        throw new Error('User not found');
     }
 });
 
@@ -114,7 +114,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
 // route    GET /api/users/all-readers
 // @access  Private (only for admin users)
 const getAllReaders = asyncHandler(async (req, res) => {
-    let { query } = req.query;
+    let {query} = req.query;
 
     const filters = {
         isAdmin: false,
@@ -122,7 +122,7 @@ const getAllReaders = asyncHandler(async (req, res) => {
 
     if (query) {
         query = decodeURIComponent(query);
-        filters.name = { $regex: query, $options: 'i' };
+        filters.name = {$regex: query, $options: 'i'};
     }
 
     const readers = await User.find(filters).populate('readerTicket');

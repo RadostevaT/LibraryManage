@@ -10,14 +10,13 @@ const createTicket = asyncHandler(async (req, res, next) => {
     try {
         const {email} = req.body;
 
+        // Генерация уникального номера билета
         async function generateUniqueTicketNumber() {
-            const characters = '0123456789'; // Допустимые символы для номера билета
-            const ticketLength = 8; // Длина номера билета
-
+            const characters = '0123456789';
+            const ticketLength = 8;
             let ticketNumber;
             let isUnique = false;
 
-            // Генерируем уникальный номер билета, проверяя его на уникальность
             while (!isUnique) {
                 ticketNumber = '';
 
@@ -26,11 +25,10 @@ const createTicket = asyncHandler(async (req, res, next) => {
                     ticketNumber += characters[randomIndex];
                 }
 
-                // Проверяем, существует ли билет с таким номером
                 const existingTicket = await ReaderTicket.findOne({ticketNumber});
 
                 if (!existingTicket) {
-                    isUnique = true; // Номер билета уникален
+                    isUnique = true;
                 }
             }
 
@@ -51,9 +49,9 @@ const createTicket = asyncHandler(async (req, res, next) => {
             throw new Error('У пользователя уже есть активный читательский билет');
         }
 
-        const dateIssued = new Date(); // Устанавливаем текущую дату и время
+        const dateIssued = new Date();
 
-        // Создаем читательский билет
+        // Создание читательского билета
         const readerTicket = new ReaderTicket({
             user: user._id,
             ticketNumber,
@@ -61,18 +59,18 @@ const createTicket = asyncHandler(async (req, res, next) => {
             expirationDate: new Date(dateIssued.getTime() + 365 * 24 * 60 * 60 * 1000),
         });
 
-        // Связываем билет с пользователем
+        // Связывание билета с пользователем
         user.readerTicket = readerTicket._id;
         await user.save();
 
-        // Сохраняем читательский билет
+        // Сохранение читательского билета
         const createdTicket = await readerTicket.save();
 
-        // Создаем запись о событии создания билета
+        // Создание записи о событии создания билета
         const ticketEvent = new TicketEventModel({
             user: user._id,
             ticket: createdTicket._id,
-            eventType: 'TicketCreated', // или другой подходящий тип события
+            eventType: 'TicketCreated',
         });
 
         await ticketEvent.save();
@@ -99,7 +97,6 @@ const deleteTicket = asyncHandler(async (req, res, next) => {
         if (email) {
             user = await User.findOne({email});
         } else {
-            // Если предоставлен параметр ticketNumber, найдем пользователя по билету
             const readerTicket = await ReaderTicket.findOne({ticketNumber});
             if (readerTicket) {
                 user = await User.findById(readerTicket.user);
@@ -111,34 +108,28 @@ const deleteTicket = asyncHandler(async (req, res, next) => {
             throw new Error('Пользователь не найден');
         }
 
-        // Проверка, что у пользователя есть активный читательский билет
         if (!user.readerTicket) {
             res.status(400);
             throw new Error('У пользователя нет читательского билета');
         }
 
-        // Найдем читательский билет пользователя
         const readerTicket = await ReaderTicket.findById(user.readerTicket);
 
-        // Проверка действительности читательского билета
         const expirationDate = new Date(readerTicket.dateIssued);
-        expirationDate.setFullYear(expirationDate.getFullYear() + 1); // Дата истечения через 1 год
+        expirationDate.setFullYear(expirationDate.getFullYear() + 1);
 
         if (Date.now() > expirationDate) {
             res.status(400);
             throw new Error('Читательский билет истек и не может быть удален');
         }
 
-        // Удалим читательский билет
         if (readerTicket) {
             await ReaderTicket.deleteOne({_id: readerTicket._id});
         } else {
-            // Обработка ситуации, когда readerTicket равен null
             res.status(404);
             throw new Error('Читательский билет не найден');
         }
 
-        // Сбросим ссылку на читательский билет у пользователя
         user.readerTicket = null;
         await user.save();
 
@@ -154,31 +145,26 @@ const deleteTicket = asyncHandler(async (req, res, next) => {
 const extendTicket = asyncHandler(async (req, res, next) => {
     try {
         const {ticketNumber} = req.body;
-        let readerTicket; // Определите переменную readerTicket
+        let readerTicket;
 
         if (!ticketNumber) {
             res.status(400);
             throw new Error('Параметр ticketNumber должен быть предоставлен');
         }
 
-        // Если предоставлен параметр ticketNumber, попробуйте найти билет по номеру
         if (ticketNumber) {
             readerTicket = await ReaderTicket.findOne({ticketNumber});
         }
 
-        // Проверка действительности читательского билета
-        const expirationDate = new Date(readerTicket.expirationDate); // Используйте expirationDate
-        expirationDate.setFullYear(expirationDate.getFullYear() + 1); // Увеличьте на 1 год
+        const expirationDate = new Date(readerTicket.expirationDate);
+        expirationDate.setFullYear(expirationDate.getFullYear() + 1);
 
-        // Обновите expirationDate на 1 год вперед от текущей даты
         const currentDate = new Date();
         readerTicket.expirationDate = new Date(currentDate);
         readerTicket.expirationDate.setFullYear(currentDate.getFullYear() + 1);
 
-        // Сохраните обновленный читательский билет
         const updatedTicket = await readerTicket.save();
 
-        // Создаем запись о событии создания билета
         const ticketEvent = new TicketEventModel({
             user: updatedTicket.user,
             ticket: updatedTicket._id,
@@ -198,7 +184,7 @@ const extendTicket = asyncHandler(async (req, res, next) => {
 // @access  Public
 const getTicketNumber = asyncHandler(async (req, res, next) => {
     try {
-        const { userId } = req.query;
+        const {userId} = req.query;
 
         if (!userId) {
             res.status(400);
@@ -219,7 +205,7 @@ const getTicketNumber = asyncHandler(async (req, res, next) => {
 
         const ticketNumber = user.readerTicket;
 
-        res.status(200).json({ ticketNumber });
+        res.status(200).json({ticketNumber});
     } catch (error) {
         next(error);
     }

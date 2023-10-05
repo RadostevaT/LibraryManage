@@ -1,12 +1,12 @@
 import {useState, useEffect} from 'react';
 import {Link, useNavigate} from 'react-router-dom';
-import {useDispatch, useSelector} from "react-redux";
-import {Form, Button, Row, Col} from "react-bootstrap";
-import FormContainer from "../components/FormContainer";
-import {toast} from "react-toastify";
-import Loader from "../components/Loader";
-import {useRegisterMutation} from "../slices/usersApiSlice";
-import {setCredentials} from "../slices/authSlice";
+import {useDispatch, useSelector} from 'react-redux';
+import {Form, Button, Row, Col} from 'react-bootstrap';
+import FormContainer from '../components/FormContainer';
+import {toast} from 'react-toastify';
+import Loader from '../components/Loader';
+import {useRegisterMutation} from '../slices/usersApiSlice';
+import {setCredentials} from '../slices/authSlice';
 
 const RegisterScreen = () => {
     const [name, setName] = useState('');
@@ -30,7 +30,7 @@ const RegisterScreen = () => {
     const submitHandler = async (e) => {
         e.preventDefault();
         if (password !== confirmPassword) {
-            toast.error('Пароли не совпадают')
+            toast.error('Пароли не совпадают');
         } else {
             try {
                 const res = await register({name, email, password}).unwrap();
@@ -40,7 +40,7 @@ const RegisterScreen = () => {
                 toast.error(err?.data?.message || err.error);
             }
         }
-    }
+    };
 
     return (
         <FormContainer>
@@ -53,7 +53,7 @@ const RegisterScreen = () => {
                         placeholder='Введите ФИО'
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                    ></Form.Control>
+                    />
                 </Form.Group>
 
                 <Form.Group className='my-2' controlId='email'>
@@ -63,7 +63,7 @@ const RegisterScreen = () => {
                         placeholder='Введите email'
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                    ></Form.Control>
+                    />
                 </Form.Group>
 
                 <Form.Group className='my-2' controlId='password'>
@@ -73,7 +73,7 @@ const RegisterScreen = () => {
                         placeholder='Введите пароль'
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                    ></Form.Control>
+                    />
                 </Form.Group>
 
                 <Form.Group className='my-2' controlId='confirmPassword'>
@@ -83,7 +83,7 @@ const RegisterScreen = () => {
                         placeholder='Введите пароль'
                         value={confirmPassword}
                         onChange={(e) => setConfirmedPassword(e.target.value)}
-                    ></Form.Control>
+                    />
                 </Form.Group>
 
                 {isLoading && <Loader/>}
@@ -99,7 +99,7 @@ const RegisterScreen = () => {
                 </Row>
             </Form>
         </FormContainer>
-    )
-}
+    );
+};
 
 export default RegisterScreen;

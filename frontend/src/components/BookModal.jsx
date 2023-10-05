@@ -1,10 +1,12 @@
 import {Button, Modal, ListGroup} from 'react-bootstrap';
 
 function BookModal({show, onHide, bookData, onAction}) {
+    // Если данных нет, не отрисовываем модальное окно
     if (!bookData) {
-        return null; // Если данных нет, не отрисовываем модальное окно
+        return null;
     }
 
+    // Обработчик действия (выдача или возврат книги)
     const handleAction = () => {
         onHide();
         onAction(bookData._id, bookData.title, bookData.author, bookData.available, bookData.lastEventId);

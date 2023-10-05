@@ -1,12 +1,12 @@
 import {useState, useEffect} from 'react';
 import {Link, useNavigate} from 'react-router-dom';
-import {Form, Button, Row, Col} from "react-bootstrap";
-import {useDispatch, useSelector} from "react-redux";
-import FormContainer from "../components/FormContainer";
-import {useLoginMutation} from "../slices/usersApiSlice";
-import {setCredentials} from "../slices/authSlice";
-import {toast} from "react-toastify";
-import Loader from "../components/Loader";
+import {Form, Button, Row, Col} from 'react-bootstrap';
+import {useDispatch, useSelector} from 'react-redux';
+import FormContainer from '../components/FormContainer';
+import {useLoginMutation} from '../slices/usersApiSlice';
+import {setCredentials} from '../slices/authSlice';
+import {toast} from 'react-toastify';
+import Loader from '../components/Loader';
 
 const LoginScreen = () => {
     const [email, setEmail] = useState('');
@@ -20,6 +20,7 @@ const LoginScreen = () => {
     const {userInfo} = useSelector((state) => state.auth);
 
     useEffect(() => {
+        // Перенаправление на главную страницу при успешном входе
         if (userInfo) {
             navigate('/');
         }
@@ -34,12 +35,13 @@ const LoginScreen = () => {
         } catch (err) {
             toast.error(err?.data?.message || err.error);
         }
-    }
+    };
 
     return (
         <FormContainer>
             <h1>Вход</h1>
             <Form onSubmit={submitHandler}>
+
                 <Form.Group className='my-2' controlId='email'>
                     <Form.Label>Email</Form.Label>
                     <Form.Control
@@ -73,7 +75,7 @@ const LoginScreen = () => {
                 </Row>
             </Form>
         </FormContainer>
-    )
-}
+    );
+};
 
-export default LoginScreen
+export default LoginScreen;

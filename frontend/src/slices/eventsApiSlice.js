@@ -1,4 +1,4 @@
-import { apiSlice } from "./apiSlice.js";
+import {apiSlice} from "./apiSlice.js";
 
 const EVENTS_URL = '/api/events';
 

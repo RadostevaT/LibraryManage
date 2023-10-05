@@ -14,7 +14,7 @@ const getAllBookEvents = asyncHandler(async (req, res) => {
         res.json(bookEvents);
     } catch (error) {
         console.error(error);
-        res.status(500).json({message: 'Internal Server Error'});
+        res.status(500).json({message: 'Внутренняя ошибка сервера'});
     }
 });
 
@@ -30,7 +30,7 @@ const getAllTicketEvents = asyncHandler(async (req, res) => {
         res.json(ticketEvents);
     } catch (error) {
         console.error(error);
-        res.status(500).json({message: 'Internal Server Error'});
+        res.status(500).json({message: 'Внутренняя ошибка сервера'});
     }
 });
 
@@ -60,7 +60,7 @@ const getAllEvents = asyncHandler(async (req, res) => {
         res.json(allEvents);
     } catch (error) {
         console.error(error);
-        res.status(500).json({message: 'Internal Server Error'});
+        res.status(500).json({message: 'Внутренняя ошибка сервера'});
     }
 });
 

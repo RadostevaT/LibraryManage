@@ -8,11 +8,11 @@ import {toast} from 'react-toastify';
 import {Table, Pagination, InputGroup, Form, Button} from 'react-bootstrap';
 import BookModal from '../components/BookModal.jsx';
 import IssueModal from '../components/IssueModal.jsx';
-import ReturnModal from "../components/ReturnModal.jsx";
-import Loader from "../components/Loader.jsx";
+import ReturnModal from '../components/ReturnModal.jsx';
+import Loader from '../components/Loader.jsx';
 
 const AdminBooksScreen = () => {
-    // Мутации для получения списка книг, поиска и выдачи книги
+    // Определение мутаций для получения и поиска книг
     const [booksList, {isLoading}] = useListOfBooksMutation();
     const [searchBooks] = useSearchBooksMutation();
 
@@ -31,7 +31,6 @@ const AdminBooksScreen = () => {
     const [returnModalShow, setReturnModalShow] = useState(false);
 
     useEffect(() => {
-        // Функция для получения списка книг
         const fetchData = async () => {
             try {
                 const response = await booksList({query: searchQuery}).unwrap();
@@ -51,17 +50,14 @@ const AdminBooksScreen = () => {
     const indexOfFirstBook = indexOfLastBook - booksPerPage;
     const currentBooks = booksData.slice(indexOfFirstBook, indexOfLastBook);
 
-    // Обработчик смены страницы
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
     };
 
-    // Обработчик изменения значения поисковой строки
     const handleInputChange = (e) => {
         setTempSearchQuery(e.target.value); // Сохраняем временное значение
     };
 
-    // Обработчик поискового запроса
     const handleSearch = async () => {
         try {
             setCurrentPage(1);
@@ -79,7 +75,6 @@ const AdminBooksScreen = () => {
         }
     };
 
-    // Обработчик нажатия клавиши Enter
     const handleKeyPress = (event) => {
         if (event.key === 'Enter') {
             handleSearch();
@@ -90,23 +85,24 @@ const AdminBooksScreen = () => {
     function handleIssue(bookId, isAvailable) {
         setSelectedBook({_id: bookId, available: isAvailable});
         setIssueModalShow(true);
-    };
+    }
 
-    //
+    // Обработчик выбора книги для возврата
     function handleReturn(bookId, title, author, isAvailable, lastEventId) {
         setSelectedBook({
             _id: bookId,
             title: title,
             author: author,
             available: isAvailable,
-            lastEventId: lastEventId
+            lastEventId: lastEventId,
         });
         setReturnModalShow(true);
     }
 
     return (
         <BooksList>
-            <h1 className='mb-4'>Каталог книг</h1>
+            <h1 className="mb-4">Каталог книг</h1>
+
             <InputGroup className="mb-3">
                 <Form.Control
                     placeholder="Поиск по названию или автору"
@@ -120,7 +116,8 @@ const AdminBooksScreen = () => {
                     Поиск
                 </Button>
             </InputGroup>
-            <Table striped bordered hover responsive className='mb-4'>
+
+            <Table striped bordered hover responsive className="mb-4">
                 <thead>
                 <tr>
                     <th>#</th>
@@ -149,6 +146,8 @@ const AdminBooksScreen = () => {
                 ))}
                 </tbody>
             </Table>
+
+            {/* Модальное окно для книги */}
             <BookModal
                 show={modalShow}
                 onHide={() => setModalShow(false)}
@@ -156,19 +155,21 @@ const AdminBooksScreen = () => {
                 onAction={selectedBook && selectedBook.available ? handleIssue : handleReturn}
             />
 
+            {/* Модальное окно для выдачи книги */}
             <IssueModal
                 show={issueModalShow}
                 onHide={() => setIssueModalShow(false)}
                 selectedBook={selectedBook}
             />
 
+            {/* Модальное окно для возврата книги */}
             <ReturnModal
                 show={returnModalShow}
                 onHide={() => setReturnModalShow(false)}
                 selectedBook={selectedBook}
             />
 
-            {isLoading && <Loader />}
+            {isLoading && <Loader/>}
 
             <Pagination>
                 <Pagination.First onClick={() => handlePageChange(1)}/>
@@ -182,7 +183,7 @@ const AdminBooksScreen = () => {
                     </Pagination.Item>
                 ))}
                 <Pagination.Next onClick={() => handlePageChange(currentPage + 1)}
-                                 disabled={currentPage === Math.ceil(totalBooksCount / booksPerPage)}/>
+                    disabled={currentPage === Math.ceil(totalBooksCount / booksPerPage)}/>
                 <Pagination.Last onClick={() => handlePageChange(Math.ceil(totalBooksCount / booksPerPage))}/>
             </Pagination>
         </BooksList>

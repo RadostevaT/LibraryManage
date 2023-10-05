@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 
+// Схема для книг
 const bookSchema = mongoose.Schema({
     title: {
         type: String,
@@ -30,7 +31,7 @@ const bookSchema = mongoose.Schema({
         ref: 'BookEvent'
     }
 }, {
-    timestamps: true
+    timestamps: true // Добавление временных меток createdAt и updatedAt
 });
 
 const Book = mongoose.model('Book', bookSchema);

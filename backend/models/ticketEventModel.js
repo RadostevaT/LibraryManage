@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 
+// Схема для событий читательских билетов
 const ticketEventSchema = mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
@@ -17,7 +18,7 @@ const ticketEventSchema = mongoose.Schema({
     }
 }, {
     timestamps: true,
-    collection: 'ticketEvents'
+    collection: 'ticketEvents' // Название коллекции в базе данных
 });
 
 const TicketEvent = mongoose.model('TicketEvent', ticketEventSchema);
