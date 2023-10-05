@@ -1,18 +1,25 @@
 import EventsList from "../components/EventsList.jsx";
-import {Button, Pagination, Table, Form} from "react-bootstrap";
-import {useAllEventsMutation} from "../slices/eventsApiSlice.js";
-import {useEffect, useState} from "react";
+import { Button, Pagination, Table, Form, Col, Row } from "react-bootstrap";
+import { useAllEventsMutation } from "../slices/eventsApiSlice.js";
+import { useEffect, useState } from "react";
 import Loader from "../components/Loader.jsx";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
 import formatDateTime from "../utils/formatDateTime.js";
 import EventsModal from "../components/EventsModal.jsx";
+import DatePicker, { registerLocale } from "react-datepicker";
+import { isWithinInterval } from 'date-fns';
+import ru from 'date-fns/locale/ru';
+import 'react-datepicker/dist/react-datepicker.css';
 
 const ReportsScreen = () => {
-    const [fetchAllEvents, {isLoading}] = useAllEventsMutation();
+    registerLocale('ru', ru);
+    const [fetchAllEvents, { isLoading }] = useAllEventsMutation();
     const [currentPage, setCurrentPage] = useState(1);
     const eventsPerPage = 10;
     const [totalEventsCount, setTotalEventsCount] = useState(0);
     const [eventsData, setEventsData] = useState([]);
+    const [dateRange, setDateRange] = useState([null, null]);
+    const [startDate, endDate] = dateRange;
 
     const [selectedEvent, setSelectedEvent] = useState(null);
     const [showModal, setShowModal] = useState(false);
@@ -46,35 +53,95 @@ const ReportsScreen = () => {
     const filteredEvents = selectedEventType === "all"
         ? eventsData
         : eventsData.filter(event => event.eventType === selectedEventType);
-    const currentEvents = filteredEvents.slice(indexOfFirstEvent, indexOfLastEvent);
+
+    // Фильтрация событий по выбранному диапазону дат
+    const currentEvents = filteredEvents.filter((event) => {
+        if (!startDate || !endDate) {
+            return true; // Если диапазон дат не выбран, показываем все события
+        }
+        const eventDate = new Date(event.createdAt);
+        return isWithinInterval(eventDate, { start: startDate, end: endDate });
+    }).slice(indexOfFirstEvent, indexOfLastEvent);
+
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
 
     const handleFilterChange = (selectedEventType) => {
         setSelectedEventType(selectedEventType);
 
-        const filteredEvents = eventsData.filter(event => event.eventType === selectedEventType);
+        // Вычисляем общее количество событий на основе выбранного типа события и дат
+        const filteredEvents = filterEventsByTypeAndDate(selectedEventType, startDate, endDate);
+
         setTotalEventsCount(filteredEvents.length);
         setCurrentPage(1);
     };
 
-    const handlePageChange = (pageNumber) => {
-        setCurrentPage(pageNumber);
+    const handleDateChange = (dates) => {
+        const [start, end] = dates;
+        setDateRange([start, end]);
+
+        // Вычисляем общее количество событий на основе выбранного типа события и дат
+        const filteredEvents = filterEventsByTypeAndDate(selectedEventType, start, end);
+
+        setCurrentPage(1);
+        setTotalEventsCount(filteredEvents.length);
+    };
+
+// Функция для фильтрации событий по типу и дате
+    const filterEventsByTypeAndDate = (eventType, startDate, endDate) => {
+        return eventsData.filter((event) => {
+            // Фильтрация по типу события
+            if (eventType !== "all" && event.eventType !== eventType) {
+                return false;
+            }
+
+            // Фильтрация по дате
+            if (!startDate || !endDate) {
+                return true; // Если диапазон дат не выбран, показываем все события
+            }
+
+            const eventDate = new Date(event.createdAt);
+            return isWithinInterval(eventDate, { start: startDate, end: endDate });
+        });
     };
 
     return (
         <EventsList>
             <h1 className='mb-4'>Отчёты</h1>
 
-            <Form.Select
-                className='mb-4'
-                value={selectedEventType}
-                onChange={(e) => handleFilterChange(e.target.value)}
-            >
-                <option value="all">Все события</option>
-                <option value="TicketCreated">Читательский билет выдан</option>
-                <option value="TicketUpdated">Читательский билет продлен</option>
-                <option value="BookIssued">Книга выдана</option>
-                <option value="BookReturned">Книга возвращена</option>
-            </Form.Select>
+            <Row>
+                <Col>
+                    <Form.Select
+                        className='mb-4'
+                        value={selectedEventType}
+                        onChange={(e) => handleFilterChange(e.target.value)}
+                    >
+                        <option value="all">Все события</option>
+                        <option value="TicketCreated">Читательский билет выдан</option>
+                        <option value="TicketUpdated">Читательский билет продлен</option>
+                        <option value="BookIssued">Книга выдана</option>
+                        <option value="BookReturned">Книга возвращена</option>
+                    </Form.Select>
+                </Col>
+
+                <Col>
+                    <Form.Group className='mb-4 w-100'>
+                        <DatePicker
+                            locale="ru"
+                            isClearable
+                            selectsRange={true}
+                            startDate={startDate}
+                            endDate={endDate}
+                            onChange={handleDateChange}
+                            dateFormat="dd.MM.yyyy"
+                            placeholderText="Выберите дату"
+                            className='form-control'
+                            wrapperClassName='w-100'
+                        />
+                    </Form.Group>
+                </Col>
+            </Row>
 
             <Table striped bordered hover responsive className="mb-4">
                 <thead>
@@ -111,12 +178,12 @@ const ReportsScreen = () => {
                 event={selectedEvent}
             />
 
-            {isLoading && <Loader/>}
+            {isLoading && <Loader />}
 
             <Pagination>
-                <Pagination.First onClick={() => handlePageChange(1)}/>
-                <Pagination.Prev onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}/>
-                {Array.from({length: Math.ceil(totalEventsCount / eventsPerPage)}, (_, i) => (
+                <Pagination.First onClick={() => handlePageChange(1)} />
+                <Pagination.Prev onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1} />
+                {Array.from({ length: Math.ceil(totalEventsCount / eventsPerPage) }, (_, i) => (
                     <Pagination.Item
                         key={i + 1}
                         active={i + 1 === currentPage}
