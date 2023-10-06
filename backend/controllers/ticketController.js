@@ -118,11 +118,6 @@ const deleteTicket = asyncHandler(async (req, res, next) => {
         const expirationDate = new Date(readerTicket.dateIssued);
         expirationDate.setFullYear(expirationDate.getFullYear() + 1);
 
-        if (Date.now() > expirationDate) {
-            res.status(400);
-            throw new Error('Читательский билет истек и не может быть удален');
-        }
-
         if (readerTicket) {
             await ReaderTicket.deleteOne({_id: readerTicket._id});
         } else {

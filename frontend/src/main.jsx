@@ -6,21 +6,21 @@ import {
     Route,
     RouterProvider,
     Navigate
-} from "react-router-dom";
-import store from "./store.js";
-import {Provider} from "react-redux";
+} from 'react-router-dom';
+import store from './store.js';
+import {Provider} from 'react-redux';
 import App from './App.jsx';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
-import PrivateRoute from "./components/PrivateRoute";
-import HomeScreen from "./screens/HomeScreen";
-import LoginScreen from "./screens/LoginScreen";
-import RegisterScreen from "./screens/RegisterScreen";
-import ProfileScreen from "./screens/ProfileScreen";
-import BooksScreen from "./screens/BooksScreen";
-import AdminBooksScreen from "./screens/AdminBooksScreen";
-import TicketsScreen from "./screens/TicketsScreen";
-import ReportsScreen from "./screens/ReportsScreen";
+import PrivateRoute from './components/PrivateRoute';
+import HomeScreen from './screens/HomeScreen';
+import LoginScreen from './screens/LoginScreen';
+import RegisterScreen from './screens/RegisterScreen';
+import ProfileScreen from './screens/ProfileScreen';
+import BooksScreen from './screens/BooksScreen';
+import AdminBooksScreen from './screens/AdminBooksScreen';
+import TicketsScreen from './screens/TicketsScreen';
+import ReportsScreen from './screens/ReportsScreen';
 
 const router = createBrowserRouter(
     createRoutesFromElements(

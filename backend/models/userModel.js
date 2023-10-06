@@ -24,8 +24,6 @@ const userSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'ReaderTicket',
         unique: true,
-        sparse: true,
-        partialFilterExpression: {readerTicket: {$exists: true}},
     },
 }, {
     timestamps: true

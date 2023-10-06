@@ -2,6 +2,8 @@ import asyncHandler from 'express-async-handler';
 import generateToken from "../utils/generateToken.js";
 import User from "../models/userModel.js";
 
+const MIN_PASSWORD_LENGTH = 6;
+
 // @desc    Auth user/set token
 // route    POST /api/users/token
 // @access  Public
@@ -34,7 +36,12 @@ const registerUser = asyncHandler(async (req, res) => {
 
     if (userExists) {
         res.status(400);
-        throw new Error('User already exists');
+        throw new Error('Пользователь с таким email уже существует');
+    }
+
+    if (password.length < MIN_PASSWORD_LENGTH) {
+        res.status(400);
+        throw new Error(`Пароль должен содержать минимум ${MIN_PASSWORD_LENGTH} символов`);
     }
 
     const user = await User.create({

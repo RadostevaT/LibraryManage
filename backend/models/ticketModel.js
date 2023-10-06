@@ -8,7 +8,7 @@ const readerTicketSchema = mongoose.Schema({
         required: true,
     },
     ticketNumber: {
-        type: String,
+        type: Number,
         unique: true,
         required: true,
     },
