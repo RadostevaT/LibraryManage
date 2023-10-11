@@ -92,6 +92,7 @@ const IssueModal = ({show, onHide, selectedBook, onModalSuccess}) => {
                         <tr>
                             <th>#</th>
                             <th>Имя</th>
+                            <th>Читательский билет</th>
                             <th>Выбрать</th>
                         </tr>
                         </thead>
@@ -100,6 +101,7 @@ const IssueModal = ({show, onHide, selectedBook, onModalSuccess}) => {
                             <tr key={user._id}>
                                 <td style={{verticalAlign: 'middle'}}>{index + 1}</td>
                                 <td style={{verticalAlign: 'middle'}}>{user.name}</td>
+                                <td style={{verticalAlign: 'middle'}}>{user.readerTicket ? user.readerTicket.ticketNumber : 'Нет'}</td>
                                 <td style={{verticalAlign: 'middle'}}>
                                     <ButtonGroup>
                                         <ToggleButton

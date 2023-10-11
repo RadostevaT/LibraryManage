@@ -1,4 +1,4 @@
-import {Navbar, Nav, Container, NavDropdown, Badge} from 'react-bootstrap';
+import {Navbar, Nav, Container, NavDropdown} from 'react-bootstrap';
 import {FaSignInAlt, FaSignOutAlt} from 'react-icons/fa';
 import {useSelector, useDispatch} from "react-redux";
 import {LinkContainer} from 'react-router-bootstrap';
@@ -56,7 +56,7 @@ const Header = () => {
                                     </LinkContainer>
                                     <LinkContainer to='/register'>
                                         <Nav.Link href='/register'>
-                                            <FaSignInAlt/> Регистрация
+                                            <FaSignOutAlt/> Регистрация
                                         </Nav.Link>
                                     </LinkContainer>
                                 </>

@@ -10,6 +10,7 @@ import DatePicker, {registerLocale} from 'react-datepicker';
 import {isWithinInterval} from 'date-fns';
 import ru from 'date-fns/locale/ru';
 import 'react-datepicker/dist/react-datepicker.css';
+import exportToExcel from "../utils/exportFile.js";
 
 const ReportsScreen = () => {
     registerLocale('ru', ru);
@@ -105,14 +106,27 @@ const ReportsScreen = () => {
         });
     };
 
+    // При нажатии кнопки "Скачать в Excel"
+    const handleExportToExcel = () => {
+        const filteredData = filteredEvents.map((event) => ({
+            'Время': formatDateTime(event.createdAt),
+            'Событие': eventTypesMapping[event.eventType],
+            'Книга': event.book ? `${event.book.title} (${event.book.author})` : null,
+            'Читательский билет': event.ticket ? `${event.ticket.ticketNumber}` : null,
+            'Пользователь': event.user?.name,
+        }));
+
+        // Экспорт в Excel
+        exportToExcel(filteredData);
+    };
+
     return (
         <EventsList>
             <h1 className='mb-4'>Отчёты</h1>
 
-            <Row>
+            <Row className='mb-4'>
                 <Col>
                     <Form.Select
-                        className='mb-4'
                         value={selectedEventType}
                         onChange={(e) => handleFilterChange(e.target.value)}
                     >
@@ -125,7 +139,7 @@ const ReportsScreen = () => {
                 </Col>
 
                 <Col>
-                    <Form.Group className='mb-4 w-100'>
+                    <Form.Group className='w-100'>
                         <DatePicker
                             locale='ru'
                             isClearable
@@ -139,6 +153,12 @@ const ReportsScreen = () => {
                             wrapperClassName='w-100'
                         />
                     </Form.Group>
+                </Col>
+
+                <Col xs={12} lg={3} className={`${window.innerWidth <= 991 ? 'mt-3' : ''}`}>
+                    <Button className='w-100' onClick={handleExportToExcel}>
+                        Скачать в Excel
+                    </Button>
                 </Col>
             </Row>
 
@@ -180,7 +200,7 @@ const ReportsScreen = () => {
 
             {isLoading && <Loader/>}
 
-            <Pagination>
+            <Pagination size={`${window.innerWidth <= 576 ? 'sm' : ''}`}>
                 <Pagination.First onClick={() => handlePageChange(1)}/>
                 <Pagination.Prev onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}/>
                 {Array.from({length: Math.ceil(totalEventsCount / eventsPerPage)}, (_, i) => (
