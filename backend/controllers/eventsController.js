@@ -18,6 +18,25 @@ const getAllBookEvents = asyncHandler(async (req, res) => {
     }
 });
 
+// @desc    Get BookEvents by user id
+// @route   GET api/events/book-events/:id
+// @access  Private
+const getBookEventsByUser = asyncHandler(async (req, res) => {
+    try {
+        const {id} = req.params;
+        const bookEvents = await BookEvent.find({ user: id}).populate('book');
+
+        if (bookEvents) {
+            res.status(200).json(bookEvents);
+        } else {
+            res.status(404).json({message: 'Книги не найдены'});
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({message: 'Произошла ошибка'});
+    }
+});
+
 // @desc    Get ALL BookEvent
 // @route   GET /api/events/ticket-events
 // @access  Private
@@ -64,4 +83,4 @@ const getAllEvents = asyncHandler(async (req, res) => {
     }
 });
 
-export {getAllBookEvents, getAllTicketEvents, getAllEvents};
+export {getAllBookEvents, getAllTicketEvents, getAllEvents, getBookEventsByUser};

@@ -10,6 +10,12 @@ export const eventsApiSlice = apiSlice.injectEndpoints({
                 method: 'GET'
             })
         }),
+        bookEventsByUser: builder.query({
+            query: (id) => ({
+                url: `${EVENTS_URL}/book-events/${id}`,
+                method: 'GET'
+            })
+        }),
         ticketEvents: builder.mutation({
             query: () => ({
                 url: `${EVENTS_URL}/ticket-events`,
@@ -27,6 +33,7 @@ export const eventsApiSlice = apiSlice.injectEndpoints({
 
 export const {
     useBookEventsMutation,
+    useBookEventsByUserQuery,
     useTicketEventsMutation,
     useAllEventsMutation
 } = eventsApiSlice;
