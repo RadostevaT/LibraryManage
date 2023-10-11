@@ -72,6 +72,17 @@ const TicketsScreen = () => {
         }
     };
 
+    const handleModalSuccess = async () => {
+        try {
+            const response = await usersList({query: searchQuery}).unwrap();
+            const arrayOfUsers = Object.values(response);
+            setUsersData(arrayOfUsers);
+            setTotalUsersCount(arrayOfUsers.length);
+        } catch (err) {
+            toast.error(err?.data?.message || err.error);
+        }
+    };
+
     return (
         <ReadersList>
             <h1 className="mb-4">Список читателей</h1>
@@ -116,7 +127,12 @@ const TicketsScreen = () => {
                 ))}
                 </tbody>
             </Table>
-            <TicketsModal show={modalShow} onHide={() => setModalShow(false)} userData={selectedUser}/>
+            <TicketsModal
+                show={modalShow}
+                onHide={() => setModalShow(false)}
+                userData={selectedUser}
+                onModalSuccess={handleModalSuccess}
+            />
 
             {isLoading && <Loader/>}
 

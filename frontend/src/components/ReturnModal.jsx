@@ -2,37 +2,36 @@ import {useState} from 'react';
 import {Modal, Button, Table} from 'react-bootstrap';
 import {useReturnABookMutation} from '../slices/booksApiSlice';
 import {toast} from 'react-toastify';
-import Loader from './Loader';
 
-const ReturnModal = ({show, onHide, selectedBook}) => {
+const ReturnModal = ({show, onHide, selectedBook, onModalSuccess}) => {
     const [returnBook] = useReturnABookMutation();
     const [loading, setLoading] = useState(false);
 
     const handleReturnBook = async () => {
         try {
+            setLoading(true);
+
             if (!selectedBook) {
                 toast.error('Выберите книгу.');
                 return;
             }
-
-            setLoading(true);
 
             const response = await returnBook({
                 bookId: selectedBook._id,
                 userId: selectedBook.lastEventId?.user?._id,
             });
 
-            setLoading(false);
-
             if (response.error) {
                 toast.error('Ошибка при возврате книги. Попробуйте позже.');
             } else {
-                toast.success('Книга успешно возвращена. Обновите страницу.');
+                toast.success('Книга успешно возвращена.');
+                await onModalSuccess();
                 onHide();
             }
         } catch (error) {
-            setLoading(false);
             toast.error('Неизвестная ошибка. Попробуйте позже.');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -70,13 +69,9 @@ const ReturnModal = ({show, onHide, selectedBook}) => {
                 </Table>
             </Modal.Body>
             <Modal.Footer>
-                {loading ? (
-                    <Loader/>
-                ) : (
-                    <Button variant="danger" onClick={handleReturnBook} disabled={loading}>
-                        Вернуть книгу
-                    </Button>
-                )}
+                <Button variant="danger" onClick={handleReturnBook} disabled={loading}>
+                    Вернуть книгу
+                </Button>
             </Modal.Footer>
         </Modal>
     );

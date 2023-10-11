@@ -5,7 +5,7 @@ import {useExtendTicketMutation, useCreateTicketMutation} from '../slices/ticket
 import {toast} from 'react-toastify';
 import Loader from './Loader';
 
-function TicketsModal({show, onHide, userData}) {
+function TicketsModal({show, onHide, userData, onModalSuccess}) {
     const [extendTicket] = useExtendTicketMutation();
     const [createTicket] = useCreateTicketMutation();
     const [isLoading, setIsLoading] = useState(false);
@@ -24,6 +24,8 @@ function TicketsModal({show, onHide, userData}) {
             setIsLoading(true);
 
             await extendTicket({ticketNumber: ticketNumber});
+
+            await onModalSuccess();
 
             setIsLoading(false);
 
@@ -44,6 +46,8 @@ function TicketsModal({show, onHide, userData}) {
             setIsLoading(true);
 
             await createTicket({email: email});
+
+            await onModalSuccess();
 
             setIsLoading(false);
 
@@ -86,14 +90,12 @@ function TicketsModal({show, onHide, userData}) {
                 </ListGroup>
             </Modal.Body>
             <Modal.Footer>
-                {isLoading ? (
-                    <Loader/>
-                ) : hasReaderTicket ? (
-                    <Button variant="success" onClick={handleExtendTicket}>
+                {hasReaderTicket ? (
+                    <Button variant="success" onClick={handleExtendTicket} disabled={isLoading}>
                         Продлить
                     </Button>
                 ) : (
-                    <Button variant="success" onClick={handleCreateTicket}>
+                    <Button variant="success" onClick={handleCreateTicket} disabled={isLoading}>
                         Выдать
                     </Button>
                 )}

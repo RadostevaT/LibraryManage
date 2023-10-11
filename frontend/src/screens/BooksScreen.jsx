@@ -12,7 +12,7 @@ import ReturnModal from '../components/ReturnModal.jsx';
 import Loader from '../components/Loader.jsx';
 import {useSelector} from "react-redux";
 
-const AdminBooksScreen = () => {
+const BooksScreen = () => {
     // Определение мутаций для получения и поиска книг
     const [booksList, {isLoading}] = useListOfBooksMutation();
     const [searchBooks] = useSearchBooksMutation();
@@ -81,6 +81,17 @@ const AdminBooksScreen = () => {
     const handleKeyPress = (event) => {
         if (event.key === 'Enter') {
             handleSearch();
+        }
+    };
+
+    const handleModalSuccess = async () => {
+        try {
+            const response = await booksList({query: searchQuery}).unwrap();
+            const arrayOfBooks = Object.values(response.data);
+            setBooksData(arrayOfBooks);
+            setTotalBooksCount(arrayOfBooks.length);
+        } catch (err) {
+            toast.error(err?.data?.message || err.error);
         }
     };
 
@@ -198,6 +209,7 @@ const AdminBooksScreen = () => {
                 show={issueModalShow}
                 onHide={() => setIssueModalShow(false)}
                 selectedBook={selectedBook}
+                onModalSuccess={handleModalSuccess}
             />
 
             {/* Модальное окно для возврата книги */}
@@ -205,6 +217,7 @@ const AdminBooksScreen = () => {
                 show={returnModalShow}
                 onHide={() => setReturnModalShow(false)}
                 selectedBook={selectedBook}
+                onModalSuccess={handleModalSuccess}
             />
 
             {
@@ -230,4 +243,4 @@ const AdminBooksScreen = () => {
     )
 }
 
-export default AdminBooksScreen;
+export default BooksScreen;

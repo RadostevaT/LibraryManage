@@ -5,7 +5,7 @@ import {useIssueABookMutation} from '../slices/booksApiSlice.js';
 import {toast} from 'react-toastify';
 import Loader from "./Loader.jsx";
 
-const IssueModal = ({show, onHide, selectedBook}) => {
+const IssueModal = ({show, onHide, selectedBook, onModalSuccess}) => {
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const [selectedUserId, setSelectedUserId] = useState(null);
@@ -44,11 +44,18 @@ const IssueModal = ({show, onHide, selectedBook}) => {
         }
 
         try {
+            setIsLoading(true);
+
             await issueABook({bookId: selectedBook._id, userId: selectedUserId});
-            toast.success('Книга успешно выдана. Обновите страницу.');
+            toast.success('Книга успешно выдана.');
+
+            await onModalSuccess();
+
             onHide();
         } catch (error) {
             toast.error('Ошибка при выдаче книги');
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -116,7 +123,7 @@ const IssueModal = ({show, onHide, selectedBook}) => {
                 )}
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="success" onClick={handleIssueBook}>
+                <Button variant="success" onClick={handleIssueBook} disabled={isLoading}>
                     Выдать
                 </Button>
             </Modal.Footer>
