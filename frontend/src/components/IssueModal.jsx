@@ -1,5 +1,6 @@
 import {useState} from 'react';
 import {Modal, Button, Form, InputGroup, Table, ButtonGroup, ToggleButton} from 'react-bootstrap';
+import {FaPlus} from 'react-icons/fa';
 import {useSearchUsersMutation} from '../slices/usersApiSlice.js';
 import {useIssueABookMutation} from '../slices/booksApiSlice.js';
 import {toast} from 'react-toastify';
@@ -101,7 +102,13 @@ const IssueModal = ({show, onHide, selectedBook, onModalSuccess}) => {
                             <tr key={user._id}>
                                 <td style={{verticalAlign: 'middle'}}>{index + 1}</td>
                                 <td style={{verticalAlign: 'middle'}}>{user.name}</td>
-                                <td style={{verticalAlign: 'middle'}}>{user.readerTicket ? user.readerTicket.ticketNumber : 'Нет'}</td>
+                                <td style={{verticalAlign: 'middle'}}>
+                                    {user.readerTicket ?
+                                        user.readerTicket.ticketNumber
+                                        :
+                                        <FaPlus style={{color: '#dc3545', transform: 'rotate(45deg)'}} size={20}/>
+                                    }
+                                </td>
                                 <td style={{verticalAlign: 'middle'}}>
                                     <ButtonGroup>
                                         <ToggleButton

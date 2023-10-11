@@ -109,9 +109,11 @@ const ReportsScreen = () => {
     // При нажатии кнопки "Скачать в Excel"
     const handleExportToExcel = () => {
         const filteredData = filteredEvents.map((event) => ({
+            'Код события': event._id,
             'Время': formatDateTime(event.createdAt),
             'Событие': eventTypesMapping[event.eventType],
             'Книга': event.book ? `${event.book.title} (${event.book.author})` : null,
+            'ISBN': event.book ? `${event.book._id}` : null,
             'Читательский билет': event.ticket ? `${event.ticket.ticketNumber}` : null,
             'Пользователь': event.user?.name,
         }));

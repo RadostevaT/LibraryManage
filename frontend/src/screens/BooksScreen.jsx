@@ -1,5 +1,6 @@
 import {useState, useEffect} from 'react';
 import BooksList from '../components/BooksList';
+import {FaCheck, FaPlus} from 'react-icons/fa';
 import {
     useListOfBooksMutation,
     useSearchBooksMutation,
@@ -151,7 +152,13 @@ const BooksScreen = () => {
                                         <td style={{verticalAlign: 'middle'}}>{index + 1 + (currentPage - 1) * booksPerPage}</td>
                                         <td style={{verticalAlign: 'middle'}}>{book.title}</td>
                                         <td style={{verticalAlign: 'middle'}}>{book.author}</td>
-                                        <td style={{verticalAlign: 'middle'}}>{book.available ? 'Да' : 'Нет'}</td>
+                                        <td style={{verticalAlign: 'middle'}}>
+                                            {book.available ?
+                                                <FaCheck style={{color: '#198754'}} size={20}/>
+                                                :
+                                                <FaPlus style={{color: '#dc3545', transform: 'rotate(45deg)'}} size={20}/>
+                                            }
+                                        </td>
                                         <td style={{verticalAlign: 'middle'}}>
                                             <Button variant="outline-primary" onClick={() => {
                                                 setSelectedBook(book);
@@ -182,7 +189,13 @@ const BooksScreen = () => {
                                         <td style={{verticalAlign: 'middle'}}>{book.title}</td>
                                         <td style={{verticalAlign: 'middle'}}>{book.author}</td>
                                         <td style={{verticalAlign: 'middle'}}>{book.publishYear}</td>
-                                        <td style={{verticalAlign: 'middle'}}>{book.available ? 'Да' : 'Нет'}</td>
+                                        <td style={{verticalAlign: 'middle'}}>
+                                            {book.available ?
+                                                <FaCheck style={{color: '#198754'}} size={20}/>
+                                                :
+                                                <FaPlus style={{color: '#dc3545', transform: 'rotate(45deg)'}} size={20}/>
+                                            }
+                                        </td>
                                     </tr>
                                 ))}
                                 </tbody>

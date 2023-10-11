@@ -5,6 +5,7 @@ import {useFetchUsersMutation, useSearchUsersMutation} from '../slices/usersApiS
 import {toast} from 'react-toastify';
 import TicketsModal from '../components/TicketsModal';
 import Loader from '../components/Loader.jsx';
+import {FaPlus} from "react-icons/fa";
 
 const TicketsScreen = () => {
     const [usersList, {isLoading}] = useFetchUsersMutation();
@@ -114,7 +115,13 @@ const TicketsScreen = () => {
                     <tr key={user._id}>
                         <td style={{verticalAlign: 'middle'}}>{indexOfFirstUser + index + 1}</td>
                         <td style={{verticalAlign: 'middle'}}>{user.name}</td>
-                        <td style={{verticalAlign: 'middle'}}>{user.readerTicket ? user.readerTicket.ticketNumber : 'Нет'}</td>
+                        <td style={{verticalAlign: 'middle'}}>
+                            {user.readerTicket ?
+                                `№${user.readerTicket.ticketNumber}`
+                                :
+                                <FaPlus style={{color: '#dc3545', transform: 'rotate(45deg)'}} size={20}/>
+                            }
+                        </td>
                         <td>
                             <Button variant="outline-primary" onClick={() => {
                                 setSelectedUser(user);
