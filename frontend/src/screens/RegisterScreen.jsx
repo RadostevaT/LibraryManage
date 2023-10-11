@@ -88,7 +88,7 @@ const RegisterScreen = () => {
 
                 {isLoading && <Loader/>}
 
-                <Button type='submit' variant='primary' className='mt-3'>
+                <Button type='submit' variant='primary' className='mt-3' disabled={isLoading}>
                     Зарегистрироваться
                 </Button>
 
