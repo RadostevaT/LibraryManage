@@ -18,7 +18,6 @@ import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import BooksScreen from './screens/BooksScreen';
-import AdminBooksScreen from './screens/AdminBooksScreen';
 import TicketsScreen from './screens/TicketsScreen';
 import ReportsScreen from './screens/ReportsScreen';
 
@@ -35,14 +34,11 @@ const router = createBrowserRouter(
             </Route>
 
             {/* Private Routes for Users */}
-            <Route path='' element={<PrivateRoute roles={['user']}/>}>
+            <Route path='' element={<PrivateRoute roles={['admin', 'user']}/>}>
                 <Route path='/books' element={<BooksScreen/>}/>
             </Route>
 
             {/* Additional Route for Admins */}
-            <Route path='' element={<PrivateRoute roles={['admin']}/>}>
-                <Route path='/admin-books' element={<AdminBooksScreen/>}/>
-            </Route>
             <Route path='' element={<PrivateRoute roles={['admin']}/>}>
                 <Route path='/tickets' element={<TicketsScreen/>}/>
             </Route>

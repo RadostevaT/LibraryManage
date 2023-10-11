@@ -25,7 +25,7 @@ const Hero = () => {
                             <>
                                 {userInfo.isAdmin ? (
                                     <>
-                                        <LinkContainer to="/admin-books">
+                                        <LinkContainer to="/books">
                                             <Button variant="primary" className="me-3">
                                                 Каталог книг
                                             </Button>
