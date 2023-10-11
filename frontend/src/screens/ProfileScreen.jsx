@@ -25,7 +25,6 @@ const ProfileScreen = () => {
     const {
         data: ticketData,
         isLoading: ticketLoading,
-        isError: ticketError,
     } = useGetTicketNumberQuery(userInfo._id);
 
     useEffect(() => {
@@ -123,8 +122,6 @@ const ProfileScreen = () => {
                 >
                     {ticketLoading ? (
                         <Loader/>
-                    ) : ticketError ? (
-                        toast.error(ticketError)
                     ) : (
                         <Table striped bordered hover>
                             <thead>
