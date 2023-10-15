@@ -26,7 +26,8 @@ const userSchema = mongoose.Schema({
         unique: true,
     },
 }, {
-    timestamps: true
+    timestamps: true,
+    versionKey: false
 });
 
 // Хэширование пароля перед сохранением пользователя

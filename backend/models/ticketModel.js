@@ -21,6 +21,8 @@ const readerTicketSchema = mongoose.Schema({
         type: Date,
         required: true,
     }
+}, {
+    versionKey: false
 });
 
 const ReaderTicket = mongoose.model('ReaderTicket', readerTicketSchema, 'tickets');

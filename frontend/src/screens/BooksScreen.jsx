@@ -23,7 +23,7 @@ const BooksScreen = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const booksPerPage = 10;
     const [totalBooksCount, setTotalBooksCount] = useState(0);
-    const [searchQuery, setSearchQuery] = useState('');
+    const [searchQuery] = useState('');
     const [tempSearchQuery, setTempSearchQuery] = useState('');
 
     // Состояния для модальных окон

@@ -18,7 +18,8 @@ const ticketEventSchema = mongoose.Schema({
     }
 }, {
     timestamps: true,
-    collection: 'ticketEvents' // Название коллекции в базе данных
+    collection: 'ticketEvents',
+    versionKey: false
 });
 
 const TicketEvent = mongoose.model('TicketEvent', ticketEventSchema);

@@ -61,7 +61,10 @@ const ReportsScreen = () => {
         }
         const eventDate = new Date(event.createdAt);
         return isWithinInterval(eventDate, {start: startDate, end: endDate});
-    }).slice(indexOfFirstEvent, indexOfLastEvent);
+    });
+
+    // Нарезаем для пагинации
+    const slicedCurrentEvents = currentEvents.slice(indexOfFirstEvent, indexOfLastEvent);
 
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
@@ -108,7 +111,7 @@ const ReportsScreen = () => {
 
     // При нажатии кнопки "Скачать в Excel"
     const handleExportToExcel = () => {
-        const filteredData = filteredEvents.map((event) => ({
+        const filteredData = currentEvents.map((event) => ({
             'Код события': event._id,
             'Время': formatDateTime(event.createdAt),
             'Событие': eventTypesMapping[event.eventType],
@@ -175,7 +178,7 @@ const ReportsScreen = () => {
                 </tr>
                 </thead>
                 <tbody>
-                {currentEvents.map((event, index) => (
+                {slicedCurrentEvents.map((event, index) => (
                     <tr key={event._id}>
                         <td>{indexOfFirstEvent + index + 1}</td>
                         <td>{formatDateTime(event.createdAt)}</td>

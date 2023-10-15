@@ -18,7 +18,8 @@ const bookEventSchema = mongoose.Schema({
     }
 }, {
     timestamps: true,
-    collection: 'bookEvents' // Название коллекции в базе данных
+    collection: 'bookEvents',
+    versionKey: false
 });
 
 const BookEvent = mongoose.model('BookEvent', bookEventSchema);

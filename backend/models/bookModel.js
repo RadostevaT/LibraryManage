@@ -31,7 +31,8 @@ const bookSchema = mongoose.Schema({
         ref: 'BookEvent'
     }
 }, {
-    timestamps: true // Добавление временных меток createdAt и updatedAt
+    timestamps: true,
+    versionKey: false
 });
 
 const Book = mongoose.model('Book', bookSchema);

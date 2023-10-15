@@ -14,7 +14,7 @@ const TicketsScreen = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const usersPerPage = 10;
     const [totalUsersCount, setTotalUsersCount] = useState(0);
-    const [searchQuery, setSearchQuery] = useState('');
+    const [searchQuery] = useState('');
     const [tempSearchQuery, setTempSearchQuery] = useState('');
     const [modalShow, setModalShow] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
