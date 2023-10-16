@@ -90,8 +90,8 @@ const TicketsScreen = () => {
 
             <InputGroup className="mb-3">
                 <Form.Control
-                    placeholder="Поиск по имени"
-                    aria-label="Поиск по имени"
+                    placeholder="Поиск по имени или номеру читательского билета"
+                    aria-label="Поиск по имени или номеру читательского билета"
                     aria-describedby="basic-addon2"
                     value={tempSearchQuery}
                     onChange={handleInputChange}
