@@ -24,4 +24,4 @@ const bookEventSchema = mongoose.Schema({
 
 const BookEvent = mongoose.model('BookEvent', bookEventSchema);
 
-export default BookEvent;
+// export default BookEvent;

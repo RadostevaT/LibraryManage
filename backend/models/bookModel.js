@@ -28,7 +28,7 @@ const bookSchema = mongoose.Schema({
     },
     lastEventId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'BookEvent'
+        ref: 'Event'
     }
 }, {
     versionKey: false

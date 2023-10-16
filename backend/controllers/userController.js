@@ -1,6 +1,8 @@
 import asyncHandler from 'express-async-handler';
 import generateToken from "../utils/generateToken.js";
 import User from "../models/userModel.js";
+import Event from "../models/eventModel.js";
+import EventModel from "../models/eventModel.js";
 
 const MIN_PASSWORD_LENGTH = 6;
 
@@ -204,6 +206,13 @@ const createReaderTicket = asyncHandler(async (req, res, next) => {
         await user.save();
 
         // Создание записи о событии создания билета
+        const ticketEvent = new EventModel({
+            user: user._id,
+            ticket: user.readerTicket,
+            eventType: 'TicketCreated'
+        });
+
+        await ticketEvent.save();
 
         res.status(201).json(user);
     } catch (error) {
@@ -264,7 +273,14 @@ const extendReaderTicket = asyncHandler(async (req, res, next) => {
 
         const updatedUser = await user.save();
 
-        // Событие продления
+        // Создание записи о событии продления билета
+        const ticketEvent = new EventModel({
+            user: user._id,
+            ticket: user.readerTicket,
+            eventType: 'TicketUpdated'
+        });
+
+        await ticketEvent.save();
 
         res.status(200).json({message: 'Читательский билет успешно продлен', updatedUser});
     } catch (error) {

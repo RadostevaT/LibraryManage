@@ -1,6 +1,6 @@
 import asyncHandler from 'express-async-handler';
 import Book from '../models/bookModel.js';
-import BookEvent from "../models/bookEventModel.js";
+import Event from "../models/eventModel.js";
 import User from "../models/userModel.js";
 
 // @desc    Get ALL books with an option search
@@ -111,7 +111,7 @@ const issueBook = asyncHandler(async (req, res) => {
         book.available = false;
 
         // Создание записи о событии выдачи книги
-        const bookEvent = new BookEvent({
+        const bookEvent = new Event({
             user: userId,
             book: bookId,
             eventType: 'BookIssued',
@@ -148,7 +148,7 @@ const returnBook = asyncHandler(async (req, res) => {
         book.available = true;
 
         // Создание записи о событии возврата книги
-        const createBookEvent = new BookEvent({
+        const createBookEvent = new Event({
             user: userId,
             book: bookId,
             eventType: 'BookReturned',
