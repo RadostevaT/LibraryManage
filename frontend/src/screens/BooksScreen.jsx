@@ -111,6 +111,7 @@ const BooksScreen = () => {
             available: isAvailable,
             lastEventId: lastEventId,
         });
+        console.log(selectedBook);
         setReturnModalShow(true);
     }
 

@@ -1,10 +1,10 @@
 import asyncHandler from 'express-async-handler';
 import generateToken from "../utils/generateToken.js";
 import User from "../models/userModel.js";
-import Event from "../models/eventModel.js";
 import EventModel from "../models/eventModel.js";
 
 const MIN_PASSWORD_LENGTH = 6;
+const fullNamePattern = /^[\p{L}\s'-]+$/u;
 
 // @desc    Auth user/set token
 // route    POST /api/users/token
@@ -39,6 +39,11 @@ const registerUser = asyncHandler(async (req, res) => {
     if (userExists) {
         res.status(400);
         throw new Error('Пользователь с таким email уже существует');
+    }
+
+    if (!fullNamePattern.test(name)) {
+        res.status(400);
+        throw new Error('Некорректное ФИО. Допустимы только буквы, пробелы, дефисы и апострофы.');
     }
 
     if (password.length < MIN_PASSWORD_LENGTH) {
@@ -137,7 +142,13 @@ const getAllReaders = asyncHandler(async (req, res) => {
 
     if (query) {
         query = decodeURIComponent(query);
-        filters.name = {$regex: query, $options: 'i'};
+        if (!isNaN(query)) {
+            // Если "query" является числом, то ищем по номеру читательского билета
+            filters['readerTicket.ticketNumber'] = parseInt(query);
+        } else {
+            // Если "query" не является числом, то ищем по имени
+            filters.name = { $regex: query, $options: 'i' };
+        }
     }
 
     const readers = await User.find(filters);

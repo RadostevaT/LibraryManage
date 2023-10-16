@@ -37,7 +37,7 @@ function EventsModal({show, onHide, event}) {
                 {/* Отображение информации о событии, если оно связано с читательским билетом */}
                 {event.eventType.startsWith('Ticket') && (
                     <ListGroup>
-                        <ListGroup.Item>Читательский билет: №{event.ticket.ticketNumber}</ListGroup.Item>
+                        <ListGroup.Item>Читательский билет: №{event.user.readerTicket.ticketNumber}</ListGroup.Item>
                         <ListGroup.Item>Читатель: {event.user.name}</ListGroup.Item>
                         <ListGroup.Item>Тип события: {eventTypesMapping[event.eventType]}</ListGroup.Item>
                         <ListGroup.Item>Время события: {formatDateTime(event.createdAt)}</ListGroup.Item>

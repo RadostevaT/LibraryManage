@@ -81,7 +81,13 @@ const ReportsScreen = () => {
     };
 
     const handleDateChange = (dates) => {
-        const [start, end] = dates;
+        let [start, end] = dates;
+
+        if (start && end) {
+            end = new Date(end);
+            end.setHours(23, 59, 59, 999);
+        }
+
         setDateRange([start, end]);
 
         // Вычисляем общее количество событий на основе выбранного типа события и дат
@@ -117,7 +123,7 @@ const ReportsScreen = () => {
             'Событие': eventTypesMapping[event.eventType],
             'Книга': event.book ? `${event.book.title} (${event.book.author})` : null,
             'ISBN': event.book ? `${event.book._id}` : null,
-            'Читательский билет': event.ticket ? `${event.ticket.ticketNumber}` : null,
+            'Читательский билет': event.user.readerTicket.ticketNumber ? `${event.user.readerTicket.ticketNumber}` : null,
             'Пользователь': event.user?.name,
         }));
 

@@ -17,7 +17,13 @@ const getAllBooks = asyncHandler(async (req, res) => {
                     {title: {$regex: query, $options: 'i'}},
                     {author: {$regex: query, $options: 'i'}},
                 ],
-            });
+            })
+                .populate({
+                    path: 'lastEventId',
+                    populate: {
+                        path: 'user',
+                    },
+                });
         } else {
             books = await Book.find({})
                 .populate({

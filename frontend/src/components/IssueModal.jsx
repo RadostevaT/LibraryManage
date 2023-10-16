@@ -24,6 +24,10 @@ const IssueModal = ({show, onHide, selectedBook, onModalSuccess}) => {
             const response = await searchUsers(searchQuery).unwrap();
             const arrayOfUsers = Object.values(response);
             setSearchResults(arrayOfUsers);
+
+            if (arrayOfUsers.length == 0) {
+                toast.info('Пользователи не найдены.')
+            }
         } catch (err) {
             toast.error(err?.data?.message || err.error);
         } finally {
@@ -38,7 +42,15 @@ const IssueModal = ({show, onHide, selectedBook, onModalSuccess}) => {
             return;
         }
 
-        if (!selectedUser.readerTicket) {
+        if (selectedUser.readerTicket.ticketNumber === null) {
+            toast.error('У пользователя отсутствует читательский билет');
+            onHide();
+            return;
+        }
+
+        const currentDateTime = new Date();
+
+        if (new Date(selectedUser.readerTicket.expirationDate) < currentDateTime) {
             toast.error('У пользователя отсутствует действительный читательский билет');
             onHide();
             return;

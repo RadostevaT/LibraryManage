@@ -36,26 +36,25 @@ const ProfileScreen = () => {
     }, [userInfo.name, userInfo.email, bookEventsData, isFetchingBookEvents]);
 
     const getBooksNotReturned = (bookEventsData) => {
-        const issuedBooks = bookEventsData
-            .filter((event) => event.eventType === 'BookIssued')
-            .map((event) => event.book);
+        const bookIssuedEvents = bookEventsData
+            .filter((event) => event.eventType === 'BookIssued');
 
-        const returnedBooks = bookEventsData
-            .filter((event) => event.eventType === 'BookReturned')
-            .map((event) => event.book);
+        const notReturned = bookIssuedEvents
+            .filter((issuedEvent) => {
+                // Проверяем, есть ли среди событий возврата событие для этой книги
+                const hasCorrespondingReturnEvent = bookEventsData.some(
+                    (event) =>
+                        event.eventType === 'BookReturned' &&
+                        event.book._id === issuedEvent.book._id &&
+                        new Date(event.createdAt) > new Date(issuedEvent.createdAt)
+                );
 
-        const notReturned = issuedBooks
-            .filter((issuedBook) => {
-                const hasCorrespondingReturnEvent = returnedBooks.some((rBook) => rBook._id === issuedBook._id);
                 return !hasCorrespondingReturnEvent;
             })
-            .map((issuedBook) => {
-                const event = bookEventsData.find((event) => event.eventType === 'BookIssued' && event.book._id === issuedBook._id);
-                return {
-                    ...issuedBook,
-                    createdAt: event ? event.createdAt : null,
-                };
-            });
+            .map((issuedEvent) => ({
+                ...issuedEvent.book,
+                createdAt: issuedEvent.createdAt,
+            }));
 
         setBooksNotReturned(notReturned);
     };
