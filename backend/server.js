@@ -17,12 +17,10 @@ app.use(cookieParser());
 
 import userRoutes from './routes/userRoutes.js';
 import booksRoute from './routes/booksRoute.js';
-import ticketRoute from './routes/ticketRoute.js';
 import eventsRoute from './routes/eventsRoute.js';
 
 app.use('/api/users', userRoutes);
 app.use('/api/books', booksRoute);
-app.use('/api/tickets', ticketRoute);
 app.use('/api/events', eventsRoute);
 
 app.get('/', (req, res) => res.send('Server is ready'));

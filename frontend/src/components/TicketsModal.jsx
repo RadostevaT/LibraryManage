@@ -1,29 +1,29 @@
 import {useState} from 'react';
 import {Button, Modal, ListGroup} from 'react-bootstrap';
 import formatDateTime from '../utils/formatDateTime';
-import {useExtendTicketMutation, useCreateTicketMutation} from '../slices/ticketsApiSlice';
+import {useExtendReaderTicketMutation, useCreateReaderTicketMutation} from '../slices/usersApiSlice';
 import {toast} from 'react-toastify';
-import Loader from './Loader';
 
 function TicketsModal({show, onHide, userData, onModalSuccess}) {
-    const [extendTicket] = useExtendTicketMutation();
-    const [createTicket] = useCreateTicketMutation();
+    const [extendTicket] = useExtendReaderTicketMutation();
+    const [createTicket] = useCreateReaderTicketMutation();
     const [isLoading, setIsLoading] = useState(false);
 
     if (!userData) {
         return null;
     }
 
-    const hasReaderTicket = userData.readerTicket;
+    let hasReaderTicket;
+
+    userData.readerTicket.ticketNumber !== null ? hasReaderTicket = true : hasReaderTicket = false;
 
     const handleExtendTicket = async () => {
         try {
-            const {readerTicket} = userData;
-            const {ticketNumber} = readerTicket;
+            const {_id} = userData;
 
             setIsLoading(true);
 
-            await extendTicket({ticketNumber: ticketNumber});
+            await extendTicket({userId: _id});
 
             await onModalSuccess();
 
@@ -41,11 +41,11 @@ function TicketsModal({show, onHide, userData, onModalSuccess}) {
 
     const handleCreateTicket = async () => {
         try {
-            const {email} = userData;
+            const {_id} = userData;
 
             setIsLoading(true);
 
-            await createTicket({email: email});
+            await createTicket({userId: _id});
 
             await onModalSuccess();
 

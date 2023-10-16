@@ -2,29 +2,42 @@ import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 
 // Схема для пользователей
-const userSchema = mongoose.Schema({
+const userSchema = new mongoose.Schema({
     name: {
         type: String,
-        required: true
+        required: true,
     },
     email: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
     },
     password: {
         type: String,
-        required: true
+        required: true,
     },
     isAdmin: {
         type: Boolean,
         required: true,
     },
     readerTicket: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'ReaderTicket',
-        unique: true,
-    },
+        ticketNumber: {
+            type: Number,
+            unique: true,
+            required: false,
+            default: null,
+        },
+        dateIssued: {
+            type: Date,
+            required: false,
+            default: null,
+        },
+        expirationDate: {
+            type: Date,
+            required: false,
+            default: null,
+        },
+    }
 }, {
     timestamps: true,
     versionKey: false

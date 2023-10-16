@@ -31,7 +31,6 @@ const bookSchema = mongoose.Schema({
         ref: 'BookEvent'
     }
 }, {
-    timestamps: true,
     versionKey: false
 });
 

@@ -116,7 +116,7 @@ const TicketsScreen = () => {
                         <td style={{verticalAlign: 'middle'}}>{indexOfFirstUser + index + 1}</td>
                         <td style={{verticalAlign: 'middle'}}>{user.name}</td>
                         <td style={{verticalAlign: 'middle'}}>
-                            {user.readerTicket ?
+                            {user.readerTicket.ticketNumber !== null ?
                                 `№${user.readerTicket.ticketNumber}`
                                 :
                                 <FaPlus style={{color: '#dc3545', transform: 'rotate(45deg)'}} size={20}/>

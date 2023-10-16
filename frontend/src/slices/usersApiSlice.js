@@ -24,6 +24,12 @@ export const usersApiSlice = apiSlice.injectEndpoints({
                 method: 'POST',
             }),
         }),
+        getUser: builder.query({
+            query: () => ({
+                url: '/api/users/profile',
+                method: 'GET',
+            }),
+        }),
         updateUser: builder.mutation({
             query: (data) => ({
                 url: `${USERS_URL}/profile`,
@@ -43,6 +49,20 @@ export const usersApiSlice = apiSlice.injectEndpoints({
                 method: 'GET',
             }),
         }),
+        createReaderTicket: builder.mutation({
+            query: (data) => ({
+                url: `${USERS_URL}/create-reader-ticket`,
+                method: 'POST',
+                body: data
+            })
+        }),
+        extendReaderTicket: builder.mutation({
+            query: (data) => ({
+                url: `${USERS_URL}/extend-reader-ticket`,
+                method: 'POST',
+                body: data
+            })
+        }),
     }),
 });
 
@@ -50,7 +70,10 @@ export const {
     useLoginMutation,
     useLogoutMutation,
     useRegisterMutation,
+    useGetUserQuery,
     useUpdateUserMutation,
     useFetchUsersMutation,
-    useSearchUsersMutation
+    useSearchUsersMutation,
+    useCreateReaderTicketMutation,
+    useExtendReaderTicketMutation
 } = usersApiSlice;

@@ -4,8 +4,7 @@ import {Form, Button, Tabs, Tab, Table} from 'react-bootstrap';
 import FormContainer from '../components/FormContainer';
 import Loader from '../components/Loader';
 import {setCredentials} from '../slices/authSlice';
-import {useUpdateUserMutation} from '../slices/usersApiSlice';
-import {useGetTicketNumberQuery} from '../slices/ticketsApiSlice.js';
+import {useUpdateUserMutation, useGetUserQuery} from '../slices/usersApiSlice';
 import {useBookEventsByUserQuery} from '../slices/eventsApiSlice.js';
 import {toast} from 'react-toastify';
 import formatDateTime from '../utils/formatDateTime.js';
@@ -20,16 +19,12 @@ const ProfileScreen = () => {
     const dispatch = useDispatch();
     const {userInfo} = useSelector((state) => state.auth);
 
+    const {data: userProfile, isLoading} = useGetUserQuery();
     const [updateProfile, {isLoading: isUpdating}] = useUpdateUserMutation();
     const {
         data: bookEventsData,
         isLoading: isFetchingBookEvents,
     } = useBookEventsByUserQuery(userInfo._id);
-
-    const {
-        data: ticketData,
-        isLoading: isFetchingTicket,
-    } = useGetTicketNumberQuery(userInfo._id);
 
     useEffect(() => {
         setName(userInfo.name);
@@ -201,7 +196,7 @@ const ProfileScreen = () => {
                         </Tab>
                         <Tab eventKey="reader-tickets" title="Читательские билеты и книги">
                             <h4 className='mb-3'>Читательские билеты</h4>
-                            {isFetchingTicket ? (
+                            {isLoading ? (
                                 <Loader/>
                             ) : (
                                 <Table striped bordered hover className='mb-4'>
@@ -213,11 +208,11 @@ const ProfileScreen = () => {
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    {ticketData ? (
+                                    {userProfile.readerTicket.ticketNumber !== null ? (
                                         <tr>
                                             <td>1</td>
-                                            <td>{ticketData.ticketNumber.ticketNumber}</td>
-                                            <td>{formatDateTime(ticketData.ticketNumber.expirationDate)}</td>
+                                            <td>{userProfile.readerTicket.ticketNumber}</td>
+                                            <td>{formatDateTime(userProfile.readerTicket.expirationDate)}</td>
                                         </tr>
                                     ) : (
                                         <tr>
