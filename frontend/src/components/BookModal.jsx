@@ -21,7 +21,7 @@ function BookModal({show, onHide, bookData, onAction}) {
             </Modal.Header>
             <Modal.Body className="grid-example">
                 <ListGroup>
-                    <ListGroup.Item>ISBN: {bookData._id}</ListGroup.Item>
+                    <ListGroup.Item>Номер: {bookData._id}</ListGroup.Item>
                     <ListGroup.Item>Автор: {bookData.author}</ListGroup.Item>
                     <ListGroup.Item>Год публикации: {bookData.publishYear}</ListGroup.Item>
                     <ListGroup.Item>Шкаф: {bookData.idShelf}</ListGroup.Item>

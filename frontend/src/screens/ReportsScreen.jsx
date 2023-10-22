@@ -122,7 +122,7 @@ const ReportsScreen = () => {
             'Время': formatDateTime(event.createdAt),
             'Событие': eventTypesMapping[event.eventType],
             'Книга': event.book ? `${event.book.title} (${event.book.author})` : null,
-            'ISBN': event.book ? `${event.book._id}` : null,
+            'Номер книги': event.book ? `${event.book._id}` : null,
             'Читательский билет': event.user.readerTicket.ticketNumber ? `${event.user.readerTicket.ticketNumber}` : null,
             'Пользователь': event.user?.name,
         }));

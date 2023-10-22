@@ -26,7 +26,7 @@ function EventsModal({show, onHide, event}) {
                 {/* Отображение информации о событии, если оно связано с книгой */}
                 {event.eventType.startsWith('Book') && (
                     <ListGroup>
-                        <ListGroup.Item>ISBN: {event.book._id}</ListGroup.Item>
+                        <ListGroup.Item>Номер книги: {event.book._id}</ListGroup.Item>
                         <ListGroup.Item>Книга: {event.book.title} ({event.book.author})</ListGroup.Item>
                         <ListGroup.Item>Читатель: {event.user.name}</ListGroup.Item>
                         <ListGroup.Item>Тип события: {eventTypesMapping[event.eventType]}</ListGroup.Item>
